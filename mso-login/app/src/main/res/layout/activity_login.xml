@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <Space android:layout_width="wrap_content"
+        android:layout_height="10dp"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/logo_size"
+        android:src="@drawable/logo"
+        android:layout_gravity="center_horizontal"/>
+
+    <Space android:layout_width="wrap_content"
+        android:layout_height="64dp"/>
+
+    <EditText
+        android:id="@+id/edit_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/username"/>
+
+    <Space android:layout_width="wrap_content"
+        android:layout_height="48dp"/>
+
+    <EditText
+        android:id="@+id/edit_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:hint="@string/password"/>
+
+    <Space android:layout_width="wrap_content"
+        android:layout_height="48dp"/>
+
+    <!-- Button-->
+    <Button
+        android:onClick="LoginBtn_onClick"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/custom_button"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColor="@android:color/white"
+        android:text="@string/log_in"
+        android:textAllCaps="false"/>
+
+    <Space android:layout_width="wrap_content"
+        android:layout_height="48dp"/>
+
+    <!-- Checkbox-->
+    <CheckBox
+        android:id="@+id/checkBox_personnel"
+        android:checked="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/i_am_personnel" />
+
+    <Space android:layout_width="wrap_content"
+        android:layout_height="10dp"/>
+
+    <!-- Checkbox-->
+    <CheckBox
+        android:id="@+id/checkBox_ignoreMqtt"
+        android:checked="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ignore_mqtt" />
+
+</LinearLayout>

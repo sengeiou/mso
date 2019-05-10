@@ -1,0 +1,26 @@
+<resources>
+    <!-- Custom cell dimensions-->
+    <dimen name="custom_cell_height">16dp</dimen>
+    <dimen name="custom_cell_icon_size">32dp</dimen>
+    <dimen name="custom_cell_text_size_large">24sp</dimen>
+    <dimen name="custom_cell_text_size_medium">16sp</dimen>
+    <dimen name="custom_cell_margin">5dip</dimen>
+
+    <!-- Layout-->
+    <dimen name="layout_spacing">10dp</dimen>
+    <dimen name="layout_spacing_large">48dp</dimen>
+    <dimen name="padding">10dp</dimen>
+
+    <!-- Logo-->
+    <dimen name="icon_size">32dp</dimen>
+    <dimen name="logo_size">32dp</dimen>
+
+    <!-- Text-->
+    <dimen name="text_size_large">24sp</dimen>
+    <dimen name="text_size_medium">16sp</dimen>
+    <dimen name="text_spacing">5dp</dimen>
+
+    <!-- Button-->
+    <dimen name="button_corner_radius">10dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+</resources>

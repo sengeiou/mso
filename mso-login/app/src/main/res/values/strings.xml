@@ -1,0 +1,59 @@
+<resources>
+    <string name="app_name">Mitt Sykehusopphold</string>
+    <string name="title_activity_health_monitor">Monitor</string>
+
+    <!-- Bluetooth info -->
+    <string name="ble_not_supported">Bluetooth LE ikke støttet</string>
+
+    <!-- Info text -->
+    <string name="status">Status: </string>
+    <string name="device_address">Enhetens adresse: </string>
+    <string name="device_name">Enhetens navn: </string>
+    <string name="data">Siste data: </string>
+    <string name="not_available">N/A</string>
+    <string name="pulse_unit">BPM</string>
+    <string name="scanning">Søker</string>
+    <string name="connected">Tilkoblet</string>
+    <string name="disconnected">Frakoblet</string>
+    <string name="saved">(lagret)</string>
+    <string name="no_pulse_data">--</string>
+    <string name="pulse_is_not_updated">Pulsverdien oppdateres ikke</string>
+    <string name="log">Feilsøking: </string>
+
+    <!-- Buttons-->
+    <string name="start_scan">Søk</string>
+    <string name="stop_scanning">Stopp søk</string>
+    <string name="connect">Koble til</string>
+    <string name="disconnect">Koble fra</string>
+    <string name="transmit_data">Send data</string>
+    <string name="simulate_graph"><u>Simuler graf</u></string>
+
+    <!-- Toast-->
+    <string name="help">Hjelp</string>
+    <string name="needs_medical_attention"> trenger akutt nødhjelp.</string>
+
+    <!-- Checkbox-->
+    <string name="blacklist_device">Svartelist lagret enhetsadresse</string>
+
+    <!-- Text input-->
+    <string name="hint">Manuell datoverføring til enheten</string>
+
+    <!-- Login screen-->
+    <string name="register"><u>Registrer deg</u></string>
+    <string name="username">Brukernavn</string>
+    <string name="password">Passord</string>
+    <string name="log_in">Logg inn</string>
+    <string name="or">eller</string>
+    <string name="i_am_personnel">Jeg er helsepersonell</string>
+    <string name="ignore_mqtt">Ignorer MQTT (offline modus)</string>
+    <string name="missing_username">Mangler brukernavn</string>
+    <string name="missing_password">Mangler passord</string>
+    <string name="wrong_username_or_password">Feil brukernavn eller passord</string>
+    <string name="logged_in">Innlogget</string>
+
+    <!-- Personnel home screen-->
+    <string name="discovered_patients">Antall pasienter: </string>
+    <string name="patient_username">Brukernavn: </string>
+    <string name="sample_name">Navn Etternavn</string>
+    <string name="title_activity_patient">PatientActivity</string>
+</resources>

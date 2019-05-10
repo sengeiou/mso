@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PatientMainActivity"
+    android:orientation="vertical"
+    android:background="#f5f5f5"
+    android:padding="@dimen/padding">
+
+    <Space android:layout_width="wrap_content"
+        android:layout_height="@dimen/layout_spacing"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/logo_size"
+        android:src="@drawable/logo"
+        android:layout_gravity="center_horizontal"/>
+
+    <Space android:layout_width="wrap_content"
+        android:layout_height="@dimen/layout_spacing"/>
+
+    <!-- Heart rate-->
+    <LinearLayout
+        android:id="@+id/custom_cell_heart_rate"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="@dimen/padding"
+        android:layout_marginTop="@dimen/padding"
+        android:orientation="vertical">
+
+        <!-- Heart rate (container)-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <!-- Heart rate icon-->
+            <ImageView
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:src="@drawable/ic_favorite_border_black_24dp"/>
+
+            <Space android:layout_height="wrap_content"
+                android:layout_width="5dp"/>
+
+            <!-- Current pulse value-->
+            <TextView
+                android:id="@+id/heart_rate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_pulse_data"
+                android:textSize="@dimen/text_size_large"
+                android:textColor="@color/colorHeartRate"
+                android:textStyle="bold"/>
+
+            <Space android:layout_height="wrap_content"
+                android:layout_width="@dimen/text_spacing"/>
+
+            <!--Unit indicator (BPM)-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pulse_unit"
+                android:textSize="@dimen/text_size_medium"
+                android:textColor="@color/colorHeartRate"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <!-- Heart rate info-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <TextView
+                android:id="@+id/heart_rate_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorHeartRate"
+                android:visibility="gone"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <Space android:layout_width="wrap_content"
+        android:layout_height="@dimen/layout_spacing"/>
+
+    <!-- Connection status-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/status"/>
+        <Space
+            android:layout_width="@dimen/text_spacing"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!-- Device name-->
+    <LinearLayout
+        android:id="@+id/device_name_container"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/device_name"/>
+        <Space
+            android:layout_width="@dimen/text_spacing"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/device_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!-- Device address-->
+    <LinearLayout
+        android:id="@+id/device_address_container"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/device_address"/>
+        <Space
+            android:layout_width="@dimen/text_spacing"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/device_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Space
+            android:layout_width="@dimen/text_spacing"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/saved_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorWarning"/>
+    </LinearLayout>
+
+    <!-- Checkbox-->
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:checked="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/blacklist_device"
+        android:visibility="gone"/>
+
+    <!-- Data-->
+    <LinearLayout
+        android:id="@+id/data_container"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/data"/>
+        <Space
+            android:layout_width="@dimen/text_spacing"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <Space android:layout_width="wrap_content"
+        android:layout_height="@dimen/padding"/>
+
+    <!-- Button-->
+    <Button
+        android:id="@+id/button"
+        android:onClick="bluetoothControlBtn_onClick"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/custom_button"
+        android:paddingLeft="@dimen/padding"
+        android:paddingRight="@dimen/padding"
+        android:textColor="@android:color/white"
+        android:text="@string/start_scan"
+        android:textAllCaps="false"/>
+
+    <Space android:layout_width="wrap_content"
+        android:layout_height="@dimen/layout_spacing"/>
+
+    <LinearLayout
+        android:id="@+id/text_transmit_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <EditText
+            android:id="@+id/text_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint"/>
+
+        <Space android:layout_width="wrap_content"
+            android:layout_height="@dimen/padding"/>
+
+        <Button
+            android:id="@+id/button_transmit"
+            android:onClick="buttonTransmit_onClick"
+            android:text="@string/transmit_data"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:paddingLeft="@dimen/padding"
+            android:paddingRight="@dimen/padding"
+            android:textColor="@android:color/white"
+            android:textAllCaps="false"
+            android:background="@drawable/custom_button_grey"/>
+    </LinearLayout>
+
+    <Space android:layout_width="wrap_content"
+        android:layout_height="24dp"/>
+
+    <Button
+        android:id="@+id/button_help"
+        android:onClick="buttonHelp_onClick"
+        android:text="Nødhjelp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:paddingLeft="@dimen/padding"
+        android:paddingRight="@dimen/padding"
+        android:textColor="@android:color/white"
+        android:textAllCaps="false"
+        android:background="@drawable/custom_button_grey"/>
+
+    <Space android:layout_width="wrap_content"
+        android:layout_height="24dp"/>
+
+    <ListView
+        android:id="@+id/listview_log"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:divider="@android:color/transparent"
+        android:transcriptMode="alwaysScroll"
+        android:stackFromBottom="true"
+        android:dividerHeight="5dp">
+    </ListView>
+</LinearLayout>
