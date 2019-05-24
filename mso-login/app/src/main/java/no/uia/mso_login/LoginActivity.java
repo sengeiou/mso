@@ -20,7 +20,6 @@ public class LoginActivity extends AppCompatActivity {
     private CheckBox offlineCheckBox;
 
     private Boolean personnel = false;
-    private Boolean loggedIn = false;
     private Boolean offline = false;
 
     private String username;
@@ -40,7 +39,6 @@ public class LoginActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         setUiReferences();
-        loggedIn = false;
 
         // Shared preferences
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -51,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     public void loadSharedPreferences() {
         // TODO: use constants to avoid typos
         username = mPreferences.getString("username", "");
-        username = mPreferences.getString("password", "");
+        password = mPreferences.getString("password", "");
         personnel = mPreferences.getBoolean("personnel", false);
         offline = mPreferences.getBoolean("offline", false);
 
@@ -59,6 +57,15 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText.setText(password);
         personnelCheckBox.setChecked(personnel);
         offlineCheckBox.setChecked(offline);
+    }
+
+    private void saveSharedPreferences() {
+        // TODO: use constants to avoid typos
+        mEditor.putString("username", username);
+        mEditor.putString("password", password);
+        mEditor.putBoolean("personnel", personnel);
+        mEditor.putBoolean("offline", offline);
+        mEditor.apply();
     }
 
     @Override
@@ -81,12 +88,7 @@ public class LoginActivity extends AppCompatActivity {
         username = usernameEditText.getText().toString();
         password = passwordEditText.getText().toString();
 
-        // TODO: use constants to avoid typos
-        mEditor.putString("username", username);
-        mEditor.putString("password", password);
-        mEditor.putBoolean("personnel", personnel);
-        mEditor.putBoolean("offline", offline);
-        mEditor.apply();
+        saveSharedPreferences();
 
         if(offline) { // skipping MQTT connection
             Toast.makeText(this, R.string.logged_in, Toast.LENGTH_SHORT).show();
@@ -104,11 +106,10 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        startService(view);
+        startService();
     }
 
     private void goToHomePage() {
-        loggedIn = true;
         if(personnel) { // personnel page
             Intent intent = new Intent(LoginActivity.this, PersonnelMainActivity.class);
             startActivity(intent);
@@ -119,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void startService(View v) {
+    public void startService() {
         Intent serviceIntent = new Intent(this, MqttService.class);
         serviceIntent.putExtra("username", username);
         serviceIntent.putExtra("password", password);

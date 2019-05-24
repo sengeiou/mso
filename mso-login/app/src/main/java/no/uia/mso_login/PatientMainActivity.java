@@ -42,6 +42,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -63,7 +67,7 @@ public class PatientMainActivity extends Activity {
     private String deviceName;
     private String deviceAddress;
 
-    // Program states
+    // Program state
     private enum State {
         DISCONNECTED,
         CONNECTED,
@@ -71,6 +75,7 @@ public class PatientMainActivity extends Activity {
     }
     private State state;
     private boolean currentlyConnected = false;
+    private boolean readingAccData = false;
 
     // UUIDs
     public final static UUID UUID_TX_CHARACTERISTICS =
@@ -89,26 +94,33 @@ public class PatientMainActivity extends Activity {
     private LinearLayout deviceAddressTextContainer;
     private TextView dataTextView;
     private LinearLayout dataTextContainer;
-    private LinearLayout manualTextTransmissionContainer;
     private TextView heartRateTextView;
     private TextView heartRateInfoTextView;
     private TextView savedAddressTextView;
     private Button button;
-    private Button buttonTransmit;
     private CheckBox checkbox;
-    private EditText inputText;
     private String heartRateData = null;
+    private TextView requestAccTextView;
 
     // MQTT options
-    // TODO: use static values for topic
+    // TODO: Use static string values for topic (inside strings.xml)
     private final static String topicTX = "patient";
     private String username;
     private Boolean mqttEnabled = false;
 
     // MSO_LOG
-    private ListView mListView;
-    private ArrayList<String> arrayList;
-    ListAdapterMsoLog adapter;
+    private ListView msoLogListView; // links to UI
+    private ArrayList<String> msoLogArrayList;
+    ListAdapterMsoLog msoLogAdapter;
+    private int msoLoggedItemsCounter = 0; // count logged items
+
+    // Accelerometer accGraph
+    // TODO: Add graph for both pulse (hr) and accelerometer data (acc)
+    GraphView accGraph; // link to UI
+    LineGraphSeries<DataPoint> accSeries;
+    private int accValue;
+    private final static int accXMaxValue = 300; // accCurrentXValue axis max size
+    private int accCurrentXValue = accXMaxValue;
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -146,10 +158,14 @@ public class PatientMainActivity extends Activity {
         setContentView(R.layout.activity_main_patient);
         mHandler = new Handler();
 
+        // Get username from login screen
         Intent intent = getIntent();
         username = intent.getStringExtra("username");
         if(!username.equals(""))
             mqttEnabled = true;
+
+        // Graph(s)
+        initializeGraph();
 
         initializeBluetooth();
         state = State.DISCONNECTED;
@@ -157,9 +173,32 @@ public class PatientMainActivity extends Activity {
         updateUiText();
 
         // MSO_LOG
-        arrayList = new ArrayList<>();
-        adapter = new ListAdapterMsoLog(this, R.layout.custom_list_item_log, arrayList);
-        mListView.setAdapter(adapter);
+        msoLogArrayList = new ArrayList<>();
+        msoLogAdapter = new ListAdapterMsoLog(this, R.layout.custom_list_item_log, msoLogArrayList);
+        msoLogListView.setAdapter(msoLogAdapter);
+    }
+
+    private void initializeGraph() {
+        // accelerometer accGraph
+        accGraph = (GraphView) findViewById(R.id.acc_graph);
+        accGraph.setCursorMode(true);
+        accSeries = new LineGraphSeries<DataPoint>();
+        accGraph.addSeries(accSeries);
+        accGraph.getViewport().setXAxisBoundsManual(true);
+        accGraph.getViewport().setMinX(5);
+        accGraph.getViewport().setMaxX(accXMaxValue + 5);
+        //accGraph.getViewport().setYAxisBoundsManual(true);
+        //accGraph.getViewport().setMinY(30);
+        //accGraph.getViewport().setMaxY(220);
+    }
+
+    private void addPointToAccGraph(int value) {
+        accGraph.removeAllSeries();
+        accCurrentXValue +=1;
+        accGraph.getViewport().setMinX(accCurrentXValue - accXMaxValue +5);
+        accGraph.getViewport().setMaxX(accCurrentXValue +5);
+        accSeries.appendData(new DataPoint(accCurrentXValue, value), true, accXMaxValue, true);
+        accGraph.addSeries(accSeries);
     }
 
     private void initializeBluetooth() {
@@ -326,24 +365,60 @@ public class PatientMainActivity extends Activity {
         return intentFilter;
     }
 
-    private void displayData(String data) {
-        // New data gets printed here
-        if (data == null)
-            return;
+    private Boolean isInteger(String s) {
+        return isInteger(s,10);
+    }
 
-        MSO_LOG("Data recieved from device: " + data);
+    private Boolean isInteger(String s, int radix) {
+        if(s.isEmpty()) return false;
+        for(int i = 0; i < s.length(); i++) {
+            if(i == 0 && s.charAt(i) == '-') {
+                if(s.length() == 1) return false;
+                else continue;
+            }
+            if(Character.digit(s.charAt(i),radix) < 0) return false;
+        }
+        return true;
+    }
+
+    // interpret and display data received from device
+    private void displayData(String data) {
+        if (data == null) {
+            return;
+        }
+
+        // Show raw data in MSO_LOG
+        MSO_LOG("Data received from device: " + data);
+
+        // Show raw data in info text (top of UI)
         dataTextContainer.setVisibility(View.VISIBLE);
         dataTextView.setText(data);
 
-        // Pulse data received?
+        // Check what type of data has arrived
         if (data.charAt(0) == 'B') {
+            // Received HR data
             heartRateTextView.setText(data.substring(5));
             heartRateData = data.substring(5);
-            heartRateInfoTextView.setVisibility(View.GONE);
-            heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorHeartRate));
+            heartRateInfoTextView.setVisibility(View.VISIBLE);
+
+            // Indicate whether HR value is normal or not
+            if(isInteger(heartRateData)) {
+                int hrValue = Integer.parseInt(heartRateData);
+                if(hrValue > 100) { // high HR
+                    heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorSerious));
+                    heartRateInfoTextView.setText(R.string.pulse_is_high);
+                } else if(hrValue < 50) { // low HR
+                    heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorSerious));
+                    heartRateInfoTextView.setText(R.string.pulse_is_low);
+                } else { // normal HR
+                    heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorHeartRate));
+                    heartRateInfoTextView.setText(R.string.pulse_is_normal);
+                }
+            }
             sendMessageTroughMqttService(topicTX, formatMqttMessage(heartRateData));
             return;
         } else if (data.charAt(0) == 'P') {
+            // Received alert that HR is not updating
             if (heartRateData != null) {
                 heartRateInfoTextView.setVisibility(View.VISIBLE);
                 heartRateInfoTextView.setText(R.string.pulse_is_not_updated);
@@ -352,6 +427,14 @@ public class PatientMainActivity extends Activity {
                 sendMessageTroughMqttService(topicTX, formatMqttMessage("--"));
                 return;
             }
+        } else if (data.charAt(0) == 'A') {
+            // Received accelerometer data
+            String accData = data.substring(5);
+            if(isInteger(accData)) {
+                accValue = Integer.parseInt(accData);
+                addPointToAccGraph(accValue);
+            }
+            return;
         }
 
         // Physical button pressed on device?
@@ -401,10 +484,10 @@ public class PatientMainActivity extends Activity {
         deviceAddressTextView = findViewById(R.id.device_address);
         deviceNameTextView = findViewById(R.id.device_name);
         savedAddressTextView = findViewById(R.id.saved_address);
+        requestAccTextView = findViewById(R.id.requestAcc);
 
         // Button
         button = findViewById(R.id.button);
-        buttonTransmit = findViewById(R.id.button_transmit);
 
         // Checkbox
         checkbox = findViewById(R.id.checkBox);
@@ -412,13 +495,9 @@ public class PatientMainActivity extends Activity {
         // Containers
         deviceAddressTextContainer = findViewById(R.id.device_address_container);
         dataTextContainer = findViewById(R.id.data_container);
-        manualTextTransmissionContainer = findViewById(R.id.text_transmit_container);
-
-        // User input
-        inputText = findViewById(R.id.text_input);
 
         // MSO_LOG
-        mListView = (ListView)findViewById(R.id.listview_log);
+        msoLogListView = (ListView)findViewById(R.id.listview_log);
     }
 
     public void bluetoothControlBtn_onClick(View view) {
@@ -462,31 +541,32 @@ public class PatientMainActivity extends Activity {
             case SCANNING: {
                 statusTextView.setText(R.string.scanning);
                 button.setText(R.string.stop_scanning);
-                manualTextTransmissionContainer.setVisibility(View.GONE);
+                requestAccTextView.setVisibility(View.GONE);
                 if (checkbox.isChecked() && deviceAddress != null)
                     savedAddressTextView.setText(R.string.saved);
+                accGraph.setVisibility(View.GONE);
+                readingAccData = false;
                 break;
             }
             case DISCONNECTED: {
                 statusTextView.setText(R.string.disconnected);
+                requestAccTextView.setVisibility(View.GONE);
                 dataTextContainer.setVisibility(View.GONE);
-                buttonTransmit.setVisibility(View.GONE);
-                manualTextTransmissionContainer.setVisibility(View.GONE);
                 if (deviceAddress != null) {
                     savedAddressTextView.setText(R.string.saved);
                     button.setText(R.string.connect);
                 } else
                     button.setText(R.string.start_scan);
+                accGraph.setVisibility(View.GONE);
+                readingAccData = false;
                 break;
             }
             case CONNECTED: {
                 checkbox.setVisibility(View.GONE);
+                requestAccTextView.setVisibility(View.VISIBLE);
                 statusTextView.setText(R.string.connected);
                 button.setText(R.string.disconnect);
-                manualTextTransmissionContainer.setVisibility(View.VISIBLE);
                 savedAddressTextView.setText(null);
-                inputText.setVisibility(View.VISIBLE);
-                buttonTransmit.setVisibility(View.VISIBLE);
                 break;
             }
         }
@@ -509,14 +589,57 @@ public class PatientMainActivity extends Activity {
         savedAddressTextView.setText(null);
     }
 
-    public void buttonTransmit_onClick(View view) {
-        String transmitData;
+    private String formatMqttMessage(String message) {
+        // TODO: Use XML formatting instead with < and />
+        return "[" + username + "][" + message + "]";
+    }
 
-        if (inputText.getText() != null)
-            transmitData = inputText.getText().toString();
-        else
+    private void sendMessageTroughMqttService(String topic, String message) {
+        if(!mqttEnabled)
             return;
 
+        MSO_LOG("Sending MQTT message: " + message);
+
+        // Send message to MQTT background service trough a broadcast
+        Intent intent = new Intent();
+        intent.setAction("MQTT_ON_TRANSMIT");
+        intent.putExtra("topic", topic);
+        intent.putExtra("message", message);
+        sendBroadcast(intent);
+    }
+
+    public void buttonHelp_onClick(View view) {
+        sendMessageTroughMqttService(topicTX, formatMqttMessage("H"));
+    }
+
+    private void MSO_LOG(String message) {
+        msoLoggedItemsCounter++; // count logged items
+
+        // Format message and add to array list
+        String LOG_MESSAGE = "#" + String.valueOf(msoLoggedItemsCounter) + ": " + message;
+        msoLogArrayList.add(LOG_MESSAGE);
+        msoLogAdapter.notifyDataSetChanged();
+    }
+
+    public void requestAccData_onClick(View view) {
+        if(!mConnected) {
+            MSO_LOG("Not currently connected to device.");
+            accGraph.setVisibility(View.GONE);
+            return;
+        }
+
+        if(!readingAccData) {
+            readingAccData = true;
+            accGraph.setVisibility(View.VISIBLE);
+            sendDataToDevice("ACC_START");
+        } else {
+            readingAccData = false;
+            accGraph.setVisibility(View.GONE);
+            sendDataToDevice("ACC_STOP");
+        }
+    }
+
+    private void sendDataToDevice(String transmitData) {
         MSO_LOG("Transmitting data to device: " + transmitData);
 
         final byte[] insertSomething = transmitData.getBytes();
@@ -529,30 +652,5 @@ public class PatientMainActivity extends Activity {
             mBluetoothLeService.setCharacteristicNotification(bluetoothGattCharacteristicTX,
                     true);
         }
-    }
-
-    private String formatMqttMessage(String message) {
-        MSO_LOG("Sending message to personnel: " + message);
-        return "[" + username + "][" + message + "]";
-    }
-
-    private void sendMessageTroughMqttService(String topic, String message) {
-        if(!mqttEnabled)
-            return;
-
-        Intent intent = new Intent();
-        intent.setAction("MQTT_ON_TRANSMIT");
-        intent.putExtra("topic",topic);
-        intent.putExtra("message",message);
-        sendBroadcast(intent);
-    }
-
-    public void buttonHelp_onClick(View view) {
-        sendMessageTroughMqttService(topicTX, formatMqttMessage("H"));
-    }
-
-    private void MSO_LOG(String message) {
-        arrayList.add(message);
-        adapter.notifyDataSetChanged();
     }
 }

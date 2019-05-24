@@ -21,7 +21,6 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import java.util.Random;
 
 public class PatientActivity extends AppCompatActivity {
-
     private final static String TAG = PatientActivity.class.getSimpleName();
     private String patientName;
 
@@ -96,7 +95,6 @@ public class PatientActivity extends AppCompatActivity {
 
     private void addPointToGraph(int value) {
         graph.removeAllSeries();
-
         x+=1;
         graph.getViewport().setMinX(x-xMax+5);
         graph.getViewport().setMaxX(x+5);
@@ -128,9 +126,9 @@ public class PatientActivity extends AppCompatActivity {
         graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setMinX(5);
         graph.getViewport().setMaxX(xMax + 5);
-        graph.getViewport().setYAxisBoundsManual(true);
-        graph.getViewport().setMinY(30);
-        graph.getViewport().setMaxY(220);
+        //accGraph.getViewport().setYAxisBoundsManual(true);
+        //accGraph.getViewport().setMinY(30);
+        //accGraph.getViewport().setMaxY(220);
     }
 
     private Boolean isFormattedCorrectly(String message) {

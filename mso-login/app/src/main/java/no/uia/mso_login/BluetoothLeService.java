@@ -165,7 +165,7 @@ public class BluetoothLeService extends Service {
     private final IBinder mBinder = new LocalBinder();
 
     /**
-     * Initializes a reference to the local Bluetooth adapter.
+     * Initializes a reference to the local Bluetooth msoLogAdapter.
      *
      * @return Return true if the initialization is successful.
      */

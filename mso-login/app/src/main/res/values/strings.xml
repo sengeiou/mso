@@ -1,11 +1,10 @@
 <resources>
     <string name="app_name">Mitt Sykehusopphold</string>
-    <string name="title_activity_health_monitor">Monitor</string>
 
     <!-- Bluetooth info -->
     <string name="ble_not_supported">Bluetooth LE ikke støttet</string>
 
-    <!-- Info text -->
+    <!-- Static nfo text -->
     <string name="status">Status: </string>
     <string name="device_address">Enhetens adresse: </string>
     <string name="device_name">Enhetens navn: </string>
@@ -18,6 +17,9 @@
     <string name="saved">(lagret)</string>
     <string name="no_pulse_data">--</string>
     <string name="pulse_is_not_updated">Pulsverdien oppdateres ikke</string>
+    <string name="pulse_is_high">Høy pulsverdi</string>
+    <string name="pulse_is_low">Lav pulsverdi</string>
+    <string name="pulse_is_normal">Normal hvilepuls</string>
     <string name="log">Feilsøking: </string>
 
     <!-- Buttons-->
@@ -27,6 +29,7 @@
     <string name="disconnect">Koble fra</string>
     <string name="transmit_data">Send data</string>
     <string name="simulate_graph"><u>Simuler graf</u></string>
+    <string name="request_accelerometer_data"><u>Start/stopp lesing av aksellerometerdata</u></string>
 
     <!-- Toast-->
     <string name="help">Hjelp</string>
@@ -56,4 +59,7 @@
     <string name="patient_username">Brukernavn: </string>
     <string name="sample_name">Navn Etternavn</string>
     <string name="title_activity_patient">PatientActivity</string>
+
+    <!-- Notification-->
+    <string name="connected_trough_cloudmqtt">Overfører data via CloudMQTT i bakgrunnen</string>
 </resources>

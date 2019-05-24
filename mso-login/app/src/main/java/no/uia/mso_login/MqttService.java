@@ -27,17 +27,19 @@ import java.io.UnsupportedEncodingException;
 import static no.uia.mso_login.App.MQTT_CHANNEL_ID;
 
 public class MqttService extends Service {
+    private static String intentFilterOnTransmit = "MQTT_ON_TRANSMIT";
+    private static String intentFilterOnRecieve = "MQTT_ON_RECIEVE";
+
+    // MQTT broker settings
     private static String server = "m24.cloudmqtt.com";
     private static String port = "14782";
     private static String serverUri = "tcp://" + server + ":" + port;
+    private static String topicRX = "patient"; // TODO: Define topic globally
+    private String topicTX = topicRX;
+
     private String username;
     private String password;
-    private String topicRX = "patient";
-    private String topicTX;
-
     private Boolean personnel;
-    private Boolean loggedIn = false;
-
     private Boolean mqttConnected = false;
 
     private final static String TAG = "MqttService";
@@ -47,35 +49,36 @@ public class MqttService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        // TODO: define action as static string
-        IntentFilter filter = new IntentFilter("MQTT_ON_TRANSMIT");
+        IntentFilter filter = new IntentFilter(intentFilterOnTransmit);
         this.registerReceiver(new MqttService.Receiver(), filter);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // TODO: user constants to avoid typos
+        // TODO: use constants to avoid typos
         username = intent.getStringExtra("username");
         password = intent.getStringExtra("password");
         personnel = intent.getBooleanExtra("personnel", false);
 
+        if(!mqttConnected)
+            mqttConnect();
+
+        return START_NOT_STICKY;
+    }
+
+    private void startPushNotification() {
         Intent notificationIntent = new Intent(this, LoginActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
 
         Notification notification = new NotificationCompat.Builder(this, MQTT_CHANNEL_ID )
-                .setContentTitle("Tilkoplet via CloudMQTT")
-                .setContentText("Brukernavn: " + username)
+                .setContentTitle(getResources().getString(R.string.connected_trough_cloudmqtt))
+                .setContentText(getResources().getString(R.string.username) + ": " + username)
                 .setSmallIcon(R.drawable.ic_favorite_border_black_24dp)
                 .setContentIntent(pendingIntent)
                 .build();
 
-        if(!mqttConnected)
-            mqttConnect();
-
         startForeground(1, notification);
-
-        return START_NOT_STICKY;
     }
 
     @Override
@@ -105,11 +108,10 @@ public class MqttService extends Service {
             token.setActionCallback(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-                    // We are connected
                     Log.i(TAG, "MQTT: Client was successfully connected to MQTT Broker.");
                     mqttConnected = true;
-                    loggedIn = true;
                     mqttSubscribe();
+                    startPushNotification();
                     goToHomePage();
                 }
 
@@ -126,7 +128,6 @@ public class MqttService extends Service {
     }
 
     private void goToHomePage() {
-        loggedIn = true;
         if(personnel) { // personnel page
             Intent intent = new Intent(this, PersonnelMainActivity.class);
             startActivity(intent);
@@ -199,13 +200,9 @@ public class MqttService extends Service {
 
     private void sendMessageToActivity(String msg) {
         Intent intent = new Intent();
-        intent.setAction("MQTT_ON_RECIEVE");
+        intent.setAction(intentFilterOnRecieve);
         intent.putExtra("message",msg);
         sendBroadcast(intent);
-    }
-
-    public Boolean getLoggedIn() {
-        return loggedIn;
     }
 
     private class Receiver extends BroadcastReceiver {
@@ -222,6 +219,7 @@ public class MqttService extends Service {
             }
             else if(message == null){
                 Log.i(TAG, "MQTT: Failed to transmit. Message has no body.");
+                return;
             }
 
             Log.i(TAG, "MQTT: Data ready to transmit: " + topic + "/" + message);
