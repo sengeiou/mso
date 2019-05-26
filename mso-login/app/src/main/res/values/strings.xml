@@ -29,6 +29,8 @@
     <string name="disconnect">Koble fra</string>
     <string name="transmit_data">Send data</string>
     <string name="simulate_graph"><u>Simuler puls</u></string>
+    <string name="save_patient_name">Lagre</string>
+    <string name="edit">Rediger</string>
     <string name="request_accelerometer_data"><u>Start/stopp lesing av aksellerometerdata</u></string>
 
     <!-- Toast-->

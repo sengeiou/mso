@@ -38,7 +38,7 @@ public class ListAdapterPatient extends ArrayAdapter<Patient> {
         String username = getItem(position).getUsername();
         String heartRate = getItem(position).getHeartRate();
 
-        Patient patient = new Patient(id, username, heartRate);
+        Patient patient = new Patient(id, username, "Example name", heartRate);
         LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(mResource, parent, false);
 

@@ -28,15 +28,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -48,6 +51,7 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 public class PatientMainActivity extends Activity {
@@ -76,6 +80,7 @@ public class PatientMainActivity extends Activity {
     private State state;
     private boolean currentlyConnected = false;
     private boolean readingAccData = false;
+    private boolean editingPatientName = false;
 
     // UUIDs
     public final static UUID UUID_TX_CHARACTERISTICS =
@@ -101,11 +106,16 @@ public class PatientMainActivity extends Activity {
     private CheckBox checkbox;
     private String heartRateData = null;
     private Button requestAccButton;
+    private Button editButton;
+    private EditText editTextUsername;
+    private TextView tvUsername;
+    private TextView tvPatientName;
 
     // MQTT options
     // TODO: Use static string values for topic (inside strings.xml)
     private final static String topicTX = "patient";
     private String username;
+    private String patientName;
     private Boolean mqttEnabled = false;
 
     // MSO_LOG
@@ -127,6 +137,11 @@ public class PatientMainActivity extends Activity {
     LineGraphSeries<DataPoint> heartRateSeries;
     private final static int heartRateXMaxValue = 100;
     private int heartRateXValue = heartRateXMaxValue;
+    int hrValue = 0;
+
+    // Shared preferences
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor mEditor;
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -182,6 +197,27 @@ public class PatientMainActivity extends Activity {
         msoLogArrayList = new ArrayList<>();
         msoLogAdapter = new ListAdapterMsoLog(this, R.layout.custom_list_item_log, msoLogArrayList);
         msoLogListView.setAdapter(msoLogAdapter);
+
+        // Shared preferences
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mEditor = mPreferences.edit();
+        mEditor.apply();
+    }
+
+    public void loadSharedPreferences() {
+        patientName = mPreferences.getString("name", "");
+        if(patientName.equals("")) {
+            tvPatientName.setText("Vennligst oppgi ditt fulle navn.");
+            tvPatientName.setTextColor(getResources().getColor(R.color.colorSerious));
+        } else {
+            tvPatientName.setText(patientName);
+            tvPatientName.setTextColor(getResources().getColor(R.color.colorPrimary));
+        }
+    }
+
+    private void saveSharedPreferences() {
+        mEditor.putString("name", patientName);
+        mEditor.apply();
     }
 
     private void initializeGraph() {
@@ -248,6 +284,7 @@ public class PatientMainActivity extends Activity {
         super.onResume();
         scanLeDevice(false);
         updateUiText();
+        loadSharedPreferences();
     }
 
     @Override
@@ -427,7 +464,7 @@ public class PatientMainActivity extends Activity {
 
             // Indicate whether HR value is normal or not
             if(isInteger(heartRateData)) {
-                int hrValue = Integer.parseInt(heartRateData);
+                hrValue = Integer.parseInt(heartRateData);
                 addPointToHeartRateGraph(hrValue);
                 if(hrValue > 100) { // high HR
                     heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorSerious));
@@ -510,6 +547,11 @@ public class PatientMainActivity extends Activity {
         deviceNameTextView = findViewById(R.id.device_name);
         savedAddressTextView = findViewById(R.id.saved_address);
         requestAccButton = findViewById(R.id.accButton);
+        editButton = findViewById(R.id.edit_button);
+        editTextUsername = findViewById(R.id.edit_text_username);
+        tvPatientName = findViewById(R.id.your_name);
+        tvUsername = findViewById(R.id.your_username);
+        tvUsername.setText(username);
 
         // Button
         button = findViewById(R.id.button);
@@ -618,8 +660,8 @@ public class PatientMainActivity extends Activity {
     }
 
     private String formatMqttMessage(String message) {
-        // TODO: Use XML formatting instead with < and />
-        return "[" + username + "][" + message + "]";
+        // TODO: Use XML formatting instead with < and /> (follow HL7 FHIR standard)
+        return "[" + username + "][" + patientName + "][" + message + "]";
     }
 
     private void sendMessageTroughMqttService(String topic, String message) {
@@ -685,5 +727,58 @@ public class PatientMainActivity extends Activity {
             mBluetoothLeService.setCharacteristicNotification(bluetoothGattCharacteristicTX,
                     true);
         }
+    }
+
+    public void editPatientName_onClick(View view) {
+        if(!editingPatientName) {
+            editingPatientName = true;
+            editButton.setText(getResources().getString(R.string.save_patient_name));
+            editTextUsername.setVisibility(View.VISIBLE);
+        } else {
+            editingPatientName = false;
+            editButton.setText(getResources().getString(R.string.edit));
+
+            if(editTextUsername.getText().toString().equals("")) {
+                Toast.makeText(this, "Dette navnet er ikke gyldig.", Toast.LENGTH_SHORT).show();
+                return;
+            } else {
+                patientName = editTextUsername.getText().toString();
+                tvPatientName.setText(patientName);
+                saveSharedPreferences();
+                tvPatientName.setTextColor(getResources().getColor(R.color.colorPrimary));
+            }
+            editTextUsername.setVisibility(View.GONE);
+        }
+    }
+
+    public void buttonSimulate_onClick(View view) {
+        heartRateGraph.setVisibility(View.VISIBLE);
+
+        Random r = new Random();
+        int low = -3;
+        int high = 3;
+        int result = r.nextInt(high-low) + low;
+
+        if(hrValue==0)
+            hrValue = 60;
+
+        hrValue -= result;
+
+        // Received HR data
+        heartRateTextView.setText(String.valueOf(hrValue));
+        heartRateInfoTextView.setVisibility(View.VISIBLE);
+
+        addPointToHeartRateGraph(hrValue);
+        if(hrValue > 100) { // high HR
+            heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorSerious));
+            heartRateInfoTextView.setText(R.string.pulse_is_high);
+        } else if(hrValue < 50) { // low HR
+            heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorSerious));
+            heartRateInfoTextView.setText(R.string.pulse_is_low);
+        } else { // normal HR
+            heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorHeartRate));
+            heartRateInfoTextView.setText(R.string.pulse_is_normal);
+        }
+        sendMessageTroughMqttService(topicTX, formatMqttMessage(String.valueOf(hrValue)));
     }
 }

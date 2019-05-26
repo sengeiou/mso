@@ -3,12 +3,13 @@ package no.uia.mso_login;
 public class Patient {
     private int id;
     private String username;
-    private String name;
+    private String patientName;
     private String heartRate;
 
-    public Patient(int id, String username, String heartRate) {
+    public Patient(int id, String username, String patientName, String heartRate) {
         this.id = id;
         this.username = username;
+        this.patientName = patientName;
         this.heartRate = heartRate;
     }
 
@@ -17,7 +18,7 @@ public class Patient {
     }
 
     public String getName() {
-        return name;
+        return patientName;
     }
 
     public String getUsername() {
@@ -25,7 +26,7 @@ public class Patient {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.patientName = name;
     }
 
     public void setHeartRate(String hr) {

@@ -62,6 +62,7 @@ public class PersonnelMainActivity extends AppCompatActivity {
                         PatientActivity.class);
                 // Based on item add info to intent
                 intent.putExtra("username", patient.getUsername());
+                intent.putExtra("name", patient.getName());
                 savePatientDataToFile();
                 startActivity(intent);
             }
@@ -81,8 +82,8 @@ public class PersonnelMainActivity extends AppCompatActivity {
             Log.i(TAG, "MQTT: Received data from MQTT service: " + message);
 
             // Make sure message is correct
-            if(message.split("\\]",-1).length-1 != 2) {
-                if (message.split("\\[",-1).length-1 != 2) {
+            if(message.split("\\]",-1).length-1 != 3) {
+                if (message.split("\\[",-1).length-1 != 3) {
                     Log.i(TAG, "MQTT: Error in recieved message: " + message);
                     return;
                 }
@@ -90,12 +91,17 @@ public class PersonnelMainActivity extends AppCompatActivity {
                 return;
             }
 
+            // Current format (check PatientMainActivity): [username][full patient name][value]
+
             String temp = message.substring(message.indexOf("[") + 1);
             String username = temp.substring(0, temp.indexOf("]"));
+            temp = temp.substring(temp.indexOf("[") + 1);
+            String patientName = temp.substring(0, temp.indexOf("]"));
             temp = temp.substring(temp.indexOf("[") + 1);
             String value = temp.substring(0, temp.indexOf("]"));
 
             Log.i(TAG, "MQTT: Userame: " + username);
+            Log.i(TAG, "MQTT: Full patient name: " + patientName);
             Log.i(TAG, "MQTT: Value: " + value);
 
             for(Patient p: arrayList) {
@@ -103,7 +109,7 @@ public class PersonnelMainActivity extends AppCompatActivity {
                     // Patient already exist
 
                     if(value.charAt(0)=='H') {
-                        Toast.makeText(PersonnelMainActivity.this, username +
+                        Toast.makeText(PersonnelMainActivity.this, patientName +
                                 " trenger akutt nødhjelp.", Toast.LENGTH_LONG).show();
                         return;
                     }
@@ -122,20 +128,25 @@ public class PersonnelMainActivity extends AppCompatActivity {
 
             // Add new Patient
             patientCount++;
-            Patient patient = new Patient(patientCount, username, value);
+            Patient patient = new Patient(patientCount, username, patientName, value);
             arrayList.add(patient);
             adapter.notifyDataSetChanged();
             discoveredPatients.setText(String.valueOf(patientCount));
+            savePatientDataToFile();
         }
     }
 
     public void addPatientBtn_onClick(View view) {
         // Add new Patient
         patientCount++;
-        Patient patient = new Patient(patientCount, "patient" + Integer.toString(patientCount), "--");
+        Patient patient = new Patient(patientCount,
+                "patient" + Integer.toString(patientCount),
+                "Eksempelnavn",
+                "--");
         arrayList.add(patient);
         adapter.notifyDataSetChanged();
         discoveredPatients.setText(String.valueOf(patientCount));
+        savePatientDataToFile();
     }
 
     private void writeToFile(String data, Context context) {
@@ -177,17 +188,10 @@ public class PersonnelMainActivity extends AppCompatActivity {
             Log.i(TAG, "FILEIO: Error: Can not read file: " + e.toString());
         }
 
-        if(ret.equals(""))
-            Log.i(TAG, "FILEIO: Error: Unable to read file.");
-        else
-            Log.i(TAG, "FILEIO: Success: Read data " + ret + " from file " + filename);
-
         return ret;
     }
 
     private void savePatientDataToFile() {
-        // TODO: use ArrayList to store patient data
-
         StringBuilder sb = new StringBuilder();
         for(Patient p: arrayList) {
             sb.append("<Patient>\n");
@@ -254,6 +258,7 @@ public class PersonnelMainActivity extends AppCompatActivity {
             Log.i(TAG, "FILEIO: nameTemp is currently: " + nameTemp);
             if(nameTemp.equals("null")){
                 Log.i(TAG, "FILEIO: Patient name is empty.");
+                name = "Eksempelnavn";
             } else
                 name = nameTemp;
 
@@ -269,7 +274,7 @@ public class PersonnelMainActivity extends AppCompatActivity {
             }
 
             patientCount++;
-            Patient patient = new Patient(patientCount, username, "--");
+            Patient patient = new Patient(patientCount, username, name,"--");
             arrayList.add(patient);
         }
 

@@ -20,6 +20,7 @@ import java.util.Random;
 public class PatientActivity extends AppCompatActivity {
     private final static String TAG = PatientActivity.class.getSimpleName();
     private String patientUsername;
+    private String patientName;
 
     GraphView graph;
     LineGraphSeries<DataPoint> series;
@@ -35,6 +36,7 @@ public class PatientActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         patientUsername = intent.getStringExtra("username");
+        patientName = intent.getStringExtra("name");
 
         // TODO: define action as static string
         IntentFilter filter = new IntentFilter("MQTT_ON_RECIEVE");
@@ -42,6 +44,9 @@ public class PatientActivity extends AppCompatActivity {
 
         TextView tvUsername = findViewById(R.id.patient_username);
         tvUsername.setText(patientUsername);
+
+        TextView tvPatientName = findViewById(R.id.patient_name);
+        tvPatientName.setText(patientName);
         initializeGraph();
     }
 
@@ -56,13 +61,19 @@ public class PatientActivity extends AppCompatActivity {
                 return;
 
             String temp = message.substring(message.indexOf("[") + 1);
-            String name = temp.substring(0, temp.indexOf("]"));
+            String username = temp.substring(0, temp.indexOf("]"));
+            temp = temp.substring(temp.indexOf("[") + 1);
+            String patientName = temp.substring(0, temp.indexOf("]"));
             temp = temp.substring(temp.indexOf("[") + 1);
             String value = temp.substring(0, temp.indexOf("]"));
 
-            if(name.equals(patientUsername)) {
+            Log.i(TAG, "MQTT: Userame: " + username);
+            Log.i(TAG, "MQTT: Full patient name: " + patientName);
+            Log.i(TAG, "MQTT: Value: " + value);
+
+            if(username.equals(patientUsername)) {
                 if(value.charAt(0)=='H') {
-                    Toast.makeText(PatientActivity.this, name +
+                    Toast.makeText(PatientActivity.this, patientName +
                             R.string.needs_medical_attention, Toast.LENGTH_LONG).show();
                 } else if (isInteger(value)){
                     TextView hr = findViewById(R.id.heart_rate);
@@ -129,8 +140,8 @@ public class PatientActivity extends AppCompatActivity {
     }
 
     private Boolean isFormattedCorrectly(String message) {
-        if(message.split("\\]",-1).length-1 != 2) {
-            if (message.split("\\[",-1).length-1 != 2) {
+        if(message.split("\\]",-1).length-1 != 3) {
+            if (message.split("\\[",-1).length-1 != 3) {
                 Log.i(TAG, "MQTT: Error in recieved message: " + message);
                 return false;
             }

@@ -213,6 +213,8 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
+            <Space android:layout_width="wrap_content"
+                android:layout_height="@dimen/layout_spacing"/>
 
             <!-- Button-->
             <Button
@@ -245,6 +247,9 @@
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
                 android:text="Behovknapper:"/>
+
+            <Space android:layout_width="wrap_content"
+                android:layout_height="@dimen/layout_spacing"/>
 
             <Button
                 android:id="@+id/button_help"
@@ -314,7 +319,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dip"
                 app:seriesColor="@color/colorPrimary"
+                android:visibility="gone"
                 android:id="@+id/bpm_graph" />
+
+            <TextView
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="buttonSimulate_onClick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/simulate_graph"/>
 
             <Space
                 android:layout_width="wrap_content"
@@ -355,6 +370,10 @@
                     android:textColor="@android:color/white" />
             </RelativeLayout>
 
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="10dp" />
+
             <!-- Accelerometer data-->
             <com.jjoe64.graphview.GraphView
                 android:id="@+id/acc_graph"
@@ -367,6 +386,82 @@
                 android:layout_width="wrap_content"
                 android:layout_height="10dp" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+            <Space android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:text="Innstillinger:"/>
+
+            <!-- Username-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Brukernavn: " />
+                <Space
+                    android:layout_width="@dimen/text_spacing"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/your_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <!-- Name-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fullt navn: " />
+                    <Space
+                        android:layout_width="@dimen/text_spacing"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:id="@+id/your_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </RelativeLayout>
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="10dp" />
+            <EditText
+                android:id="@+id/edit_text_username"
+                android:hint="@string/sample_name"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/edit_button"
+                android:layout_alignParentEnd="true"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:background="@drawable/custom_button"
+                android:onClick="editPatientName_onClick"
+                android:paddingLeft="@dimen/padding"
+                android:paddingRight="@dimen/padding"
+                android:text="@string/edit"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white" />
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="10dp" />
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
