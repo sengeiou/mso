@@ -35,20 +35,20 @@ public class ListAdapterPatient extends ArrayAdapter<Patient> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         int id = getItem(position).getId();
-        String name = getItem(position).getName();
+        String username = getItem(position).getUsername();
         String heartRate = getItem(position).getHeartRate();
 
-        Patient patient = new Patient(id, name, heartRate);
+        Patient patient = new Patient(id, username, heartRate);
         LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(mResource, parent, false);
 
         TextView tvName = (TextView) convertView.findViewById(R.id.name);
         TextView tvHeartRate = (TextView) convertView.findViewById(R.id.heart_rate);
 
-        tvName.setText(name);
+        tvName.setText(username);
         tvHeartRate.setText(heartRate);
 
-        Log.i(TAG, "MQTT: Name: " + name + " at position " + position);
+        Log.i(TAG, "MQTT: Name: " + username + " at position " + position);
 
         v = convertView;
         vgParent = parent;

@@ -5,10 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -22,7 +19,7 @@ import java.util.Random;
 
 public class PatientActivity extends AppCompatActivity {
     private final static String TAG = PatientActivity.class.getSimpleName();
-    private String patientName;
+    private String patientUsername;
 
     GraphView graph;
     LineGraphSeries<DataPoint> series;
@@ -37,14 +34,14 @@ public class PatientActivity extends AppCompatActivity {
         setContentView(R.layout.activity_patient);
 
         Intent intent = getIntent();
-        patientName = intent.getStringExtra("name");
+        patientUsername = intent.getStringExtra("username");
 
         // TODO: define action as static string
         IntentFilter filter = new IntentFilter("MQTT_ON_RECIEVE");
         this.registerReceiver(new PatientActivity.Receiver(), filter);
 
-        TextView tvName = findViewById(R.id.patient_name);
-        tvName.setText(patientName);
+        TextView tvUsername = findViewById(R.id.patient_username);
+        tvUsername.setText(patientUsername);
         initializeGraph();
     }
 
@@ -63,7 +60,7 @@ public class PatientActivity extends AppCompatActivity {
             temp = temp.substring(temp.indexOf("[") + 1);
             String value = temp.substring(0, temp.indexOf("]"));
 
-            if(name.equals(patientName)) {
+            if(name.equals(patientUsername)) {
                 if(value.charAt(0)=='H') {
                     Toast.makeText(PatientActivity.this, name +
                             R.string.needs_medical_attention, Toast.LENGTH_LONG).show();
@@ -132,22 +129,6 @@ public class PatientActivity extends AppCompatActivity {
     }
 
     private Boolean isFormattedCorrectly(String message) {
-        /*
-            // message formatting: [ID][PatientName][DataType][DataValue]
-            String temp = message.substring(message.indexOf("[") + 1);
-            String id = temp.substring(0, temp.indexOf("]"));
-            Log.i(TAG, "MQTT: id: " + id);
-            temp = temp.substring(temp.indexOf("[") + 1);
-            String name = temp.substring(0, temp.indexOf("]"));
-            Log.i(TAG, "MQTT: name: " + name);
-            temp = temp.substring(temp.indexOf("[") + 1);
-            String dataType = temp.substring(0, temp.indexOf("]"));
-            Log.i(TAG, "MQTT: dataType: " + dataType);
-            temp = temp.substring(temp.indexOf("[") + 1);
-            String value = temp.substring(0, temp.indexOf("]"));
-            Log.i(TAG, "MQTT: value: " + value);
-        */
-
         if(message.split("\\]",-1).length-1 != 2) {
             if (message.split("\\[",-1).length-1 != 2) {
                 Log.i(TAG, "MQTT: Error in recieved message: " + message);
