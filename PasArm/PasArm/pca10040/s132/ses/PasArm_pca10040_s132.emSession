@@ -61,7 +61,7 @@
  </Watch4>
  <Files>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="25" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../BLE.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="3" y="38" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../BLE.c" selected="1" top="635" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="38" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../BLE.c" selected="0" top="9" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="62" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../PasArm.c" selected="0" top="174" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="39" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../PasArm.h" selected="0" top="15" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="31" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="0" top="12" codecName="Default"/>
