@@ -21,6 +21,17 @@
     <Space android:layout_width="wrap_content"
         android:layout_height="@dimen/layout_spacing_large"/>
 
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:gravity="center_horizontal"
+        android:id="@+id/patient_name"
+        android:hint="@string/sample_name" />
+
+    <Space android:layout_width="wrap_content"
+        android:layout_height="10dp"/>
+
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
@@ -29,21 +40,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                android:text="@string/name"/>
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/patient_name"
-                android:hint="@string/sample_name" />
-
-            <Space android:layout_width="wrap_content"
-                android:layout_height="10dp"/>
 
             <View
                 android:layout_width="match_parent"
@@ -120,6 +116,14 @@
                     android:textStyle="bold"/>
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/heart_rate_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/colorWarning"
+                android:text="@string/pulse_is_not_updated"/>
+
             <Space android:layout_width="wrap_content"
                 android:layout_height="10dp"/>
 
@@ -145,6 +149,68 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"/>
+
+            <Space android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black"
+                    android:text="Pasientnotater: "/>
+                <!-- Button-->
+                <Button
+                    android:id="@+id/new_note_button"
+                    android:layout_alignParentEnd="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/custom_button"
+                    android:onClick="newNoteBtn_onClick"
+                    android:paddingLeft="@dimen/padding"
+                    android:paddingRight="@dimen/padding"
+                    android:text="@string/add_note"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white" />
+            </RelativeLayout>
+
+            <Space android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
+
+            <!-- Causing issues with preview -->
+            <EditText
+                android:id="@+id/edit_text_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/note_hint"/>
+
+            <Space android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
+
+            <ListView
+                android:id="@+id/listview_notes"
+                android:layout_width="fill_parent"
+                android:layout_height="200dp"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="5dp"
+                android:stackFromBottom="false"
+                android:longClickable="true"
+                android:transcriptMode="alwaysScroll"/>
+
+            <Space android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+            <Space android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

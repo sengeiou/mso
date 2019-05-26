@@ -5,6 +5,7 @@ public class Patient {
     private String username;
     private String patientName;
     private String heartRate;
+    private boolean request = false;
 
     public Patient(int id, String username, String patientName, String heartRate) {
         this.id = id;
@@ -16,6 +17,10 @@ public class Patient {
     public int getId() {
         return id;
     }
+
+    public boolean getRequest() {return request; }
+
+    public void setRequest(boolean r) {this.request = r;}
 
     public String getName() {
         return patientName;

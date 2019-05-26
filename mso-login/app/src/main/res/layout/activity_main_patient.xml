@@ -287,7 +287,7 @@
             <ListView
                 android:id="@+id/listview_log"
                 android:layout_width="fill_parent"
-                android:layout_height="30dp"
+                android:layout_height="60dp"
                 android:divider="@android:color/transparent"
                 android:dividerHeight="5dp"
                 android:stackFromBottom="true"

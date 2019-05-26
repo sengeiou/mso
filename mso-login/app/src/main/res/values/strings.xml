@@ -60,9 +60,12 @@
     <string name="discovered_patients">Antall pasienter: </string>
     <string name="patient_username">Brukernavn: </string>
     <string name="add_patient">+ Ny pasient</string>
+    <string name="add_note">+ Nytt notat</string>
     <string name="sample_name">Navn Etternavn</string>
     <string name="title_activity_patient">PatientActivity</string>
-    <string name="name">Name: </string>
+    <string name="name">Navn: </string>
+    <string name="note_hint">F.eks. Pasienten føler seg uvell.</string>
+    <string name="not_updating">Oppdateres ikke</string>
 
     <!-- Notification-->
     <string name="connected_trough_cloudmqtt">Overfører data via CloudMQTT i bakgrunnen</string>

@@ -58,6 +58,7 @@ public class PersonnelMainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Patient patient = adapter.getItem(position);
+                patient.setRequest(false);
                 Intent intent = new Intent(PersonnelMainActivity.this,
                         PatientActivity.class);
                 // Based on item add info to intent
@@ -65,6 +66,21 @@ public class PersonnelMainActivity extends AppCompatActivity {
                 intent.putExtra("name", patient.getName());
                 savePatientDataToFile();
                 startActivity(intent);
+            }
+        });
+
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+                                           int pos, long id) {
+                arrayList.remove(pos);
+                patientCount--;
+                discoveredPatients.setText(String.valueOf(patientCount));
+                adapter.notifyDataSetChanged();
+                Toast.makeText(PersonnelMainActivity.this, "Slettet pasient.",
+                        Toast.LENGTH_LONG).show();
+                savePatientDataToFile();
+                return true;
             }
         });
     }
@@ -111,6 +127,8 @@ public class PersonnelMainActivity extends AppCompatActivity {
                     if(value.charAt(0)=='H') {
                         Toast.makeText(PersonnelMainActivity.this, patientName +
                                 " trenger akutt nødhjelp.", Toast.LENGTH_LONG).show();
+                        p.setRequest(true);
+                        adapter.notifyDataSetChanged();
                         return;
                     }
 
@@ -137,10 +155,21 @@ public class PersonnelMainActivity extends AppCompatActivity {
     }
 
     public void addPatientBtn_onClick(View view) {
-        // Add new Patient
         patientCount++;
+        String usernameTemp = "patient" + Integer.toString(patientCount);
+
+        // TODO: Same username should not be created more than once
+
+        for(Patient p: arrayList) {
+            if(p.getUsername().equals(usernameTemp)){
+                // Patient username already exist
+                // return;
+            }
+        }
+
+        // Add new Patient
         Patient patient = new Patient(patientCount,
-                "patient" + Integer.toString(patientCount),
+                usernameTemp,
                 "Eksempelnavn",
                 "--");
         arrayList.add(patient);
