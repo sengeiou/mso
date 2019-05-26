@@ -129,4 +129,13 @@ public class PersonnelMainActivity extends AppCompatActivity {
             discoveredPatients.setText(String.valueOf(patientCount));
         }
     }
+
+    public void addPatientBtn_onClick(View view) {
+        // Add new Patient
+        patientCount++;
+        Patient patient = new Patient(patientCount, "example" + Integer.toString(patientCount), "--");
+        arrayList.add(patient);
+        adapter.notifyDataSetChanged();
+        discoveredPatients.setText(String.valueOf(patientCount));
+    }
 }

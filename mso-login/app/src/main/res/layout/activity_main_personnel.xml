@@ -38,7 +38,7 @@
     </LinearLayout>
 
     <Space android:layout_width="wrap_content"
-        android:layout_height="10dp"/>
+        android:layout_height="24dp"/>
 
     <ListView
         android:id="@+id/listview"
@@ -47,5 +47,22 @@
         android:divider="@android:color/transparent"
         android:dividerHeight="10dp">
     </ListView>
+
+    <Space android:layout_width="wrap_content"
+        android:layout_height="24dp"/>
+
+    <!-- Button-->
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/custom_button"
+        android:onClick="addPatientBtn_onClick"
+        android:paddingLeft="@dimen/padding"
+        android:paddingRight="@dimen/padding"
+        android:text="@string/add_patient"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white" />
 
 </LinearLayout>
