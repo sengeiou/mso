@@ -126,9 +126,9 @@ public class PatientActivity extends AppCompatActivity {
         graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setMinX(5);
         graph.getViewport().setMaxX(xMax + 5);
-        //accGraph.getViewport().setYAxisBoundsManual(true);
-        //accGraph.getViewport().setMinY(30);
-        //accGraph.getViewport().setMaxY(220);
+        graph.getViewport().setYAxisBoundsManual(true);
+        graph.getViewport().setMinY(30);
+        graph.getViewport().setMaxY(220);
     }
 
     private Boolean isFormattedCorrectly(String message) {

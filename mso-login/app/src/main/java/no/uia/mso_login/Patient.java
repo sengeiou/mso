@@ -3,7 +3,6 @@ package no.uia.mso_login;
 public class Patient {
     private int id;
     private String username;
-    private String room;
     private String name;
     private String heartRate;
 

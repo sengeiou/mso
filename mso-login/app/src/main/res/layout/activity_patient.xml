@@ -36,11 +36,19 @@
                 android:textColor="@android:color/black"
                 android:text="@string/name"/>
 
-            <EditText
+            <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/patient_name"
                 android:hint="@string/sample_name" />
+
+            <Space android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
 
             <Space android:layout_width="wrap_content"
                 android:layout_height="10dp"/>
@@ -51,10 +59,18 @@
                 android:textColor="@android:color/black"
                 android:text="Brukernavn: "/>
 
-            <EditText
+            <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:hint="brukernavn" />
+
+            <Space android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
 
             <Space android:layout_width="wrap_content"
                 android:layout_height="10dp"/>
@@ -65,13 +81,11 @@
                 android:textColor="@android:color/black"
                 android:text="Puls: "/>
 
-            <Space android:layout_width="wrap_content"
-                android:layout_height="10dp"/>
-
             <!-- Heart rate (container)-->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:gravity="center">
 
                 <!-- Heart rate icon-->
                 <ImageView
@@ -114,9 +128,6 @@
                 app:seriesColor="@color/colorPrimary"
                 android:id="@+id/graph" />
 
-            <Space android:layout_width="wrap_content"
-                android:layout_height="10dp"/>
-
             <TextView
                 android:clickable="true"
                 android:focusable="true"
@@ -125,6 +136,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/simulate_graph"/>
+
+            <Space android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

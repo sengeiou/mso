@@ -57,13 +57,6 @@ public class PersonnelMainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        /*
-        patientCount++;
-        Patient patient = new Patient(patientCount, "Example Patient Name", "70");
-        arrayList.add(patient);
-        discoveredPatients.setText(String.valueOf(patientCount));
-        */
     }
 
     private class Receiver extends BroadcastReceiver {
@@ -133,7 +126,7 @@ public class PersonnelMainActivity extends AppCompatActivity {
     public void addPatientBtn_onClick(View view) {
         // Add new Patient
         patientCount++;
-        Patient patient = new Patient(patientCount, "example" + Integer.toString(patientCount), "--");
+        Patient patient = new Patient(patientCount, "patient" + Integer.toString(patientCount), "--");
         arrayList.add(patient);
         adapter.notifyDataSetChanged();
         discoveredPatients.setText(String.valueOf(patientCount));

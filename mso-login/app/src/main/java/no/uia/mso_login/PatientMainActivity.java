@@ -37,10 +37,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
@@ -100,7 +100,7 @@ public class PatientMainActivity extends Activity {
     private Button button;
     private CheckBox checkbox;
     private String heartRateData = null;
-    private TextView requestAccTextView;
+    private Button requestAccButton;
 
     // MQTT options
     // TODO: Use static string values for topic (inside strings.xml)
@@ -115,12 +115,18 @@ public class PatientMainActivity extends Activity {
     private int msoLoggedItemsCounter = 0; // count logged items
 
     // Accelerometer accGraph
-    // TODO: Add graph for both pulse (hr) and accelerometer data (acc)
+    // TODO: Add heartRateGraph for both pulse (hr) and accelerometer data (acc)
     GraphView accGraph; // link to UI
     LineGraphSeries<DataPoint> accSeries;
     private int accValue;
     private final static int accXMaxValue = 300; // accCurrentXValue axis max size
     private int accCurrentXValue = accXMaxValue;
+
+    // Heart Rate BpmGraph
+    GraphView heartRateGraph;
+    LineGraphSeries<DataPoint> heartRateSeries;
+    private final static int heartRateXMaxValue = 100;
+    private int heartRateXValue = heartRateXMaxValue;
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -129,7 +135,7 @@ public class PatientMainActivity extends Activity {
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mBluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
             if (!mBluetoothLeService.initialize()) {
-                Log.e(TAG, "ERROR: Unable to initialize Bluetooth");
+                Log.e(TAG, "BLE: ERROR: Unable to initialize Bluetooth");
                 finish();
             }
             // Automatically connects to the device upon successful start-up initialization.
@@ -187,9 +193,18 @@ public class PatientMainActivity extends Activity {
         accGraph.getViewport().setXAxisBoundsManual(true);
         accGraph.getViewport().setMinX(5);
         accGraph.getViewport().setMaxX(accXMaxValue + 5);
-        //accGraph.getViewport().setYAxisBoundsManual(true);
-        //accGraph.getViewport().setMinY(30);
-        //accGraph.getViewport().setMaxY(220);
+
+        // Heart Rate heartRateGraph
+        heartRateGraph = (GraphView) findViewById(R.id.bpm_graph);
+        heartRateGraph.setCursorMode(true);
+        heartRateSeries = new LineGraphSeries<DataPoint>();
+        heartRateGraph.addSeries(heartRateSeries);
+        heartRateGraph.getViewport().setXAxisBoundsManual(true);
+        heartRateGraph.getViewport().setMinX(5);
+        heartRateGraph.getViewport().setMaxX(heartRateXMaxValue + 5);
+        heartRateGraph.getViewport().setYAxisBoundsManual(true);
+        heartRateGraph.getViewport().setMinY(30);
+        heartRateGraph.getViewport().setMaxY(220);
     }
 
     private void addPointToAccGraph(int value) {
@@ -199,6 +214,15 @@ public class PatientMainActivity extends Activity {
         accGraph.getViewport().setMaxX(accCurrentXValue +5);
         accSeries.appendData(new DataPoint(accCurrentXValue, value), true, accXMaxValue, true);
         accGraph.addSeries(accSeries);
+    }
+
+    private void addPointToHeartRateGraph(int value) {
+        heartRateGraph.removeAllSeries();
+        heartRateXValue +=1;
+        heartRateGraph.getViewport().setMinX(heartRateXValue - heartRateXMaxValue +5);
+        heartRateGraph.getViewport().setMaxX(heartRateXValue +5);
+        heartRateSeries.appendData(new DataPoint(heartRateXValue, value), true, heartRateXMaxValue, true);
+        heartRateGraph.addSeries(heartRateSeries);
     }
 
     private void initializeBluetooth() {
@@ -404,6 +428,7 @@ public class PatientMainActivity extends Activity {
             // Indicate whether HR value is normal or not
             if(isInteger(heartRateData)) {
                 int hrValue = Integer.parseInt(heartRateData);
+                addPointToHeartRateGraph(hrValue);
                 if(hrValue > 100) { // high HR
                     heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorSerious));
                     heartRateInfoTextView.setText(R.string.pulse_is_high);
@@ -484,7 +509,7 @@ public class PatientMainActivity extends Activity {
         deviceAddressTextView = findViewById(R.id.device_address);
         deviceNameTextView = findViewById(R.id.device_name);
         savedAddressTextView = findViewById(R.id.saved_address);
-        requestAccTextView = findViewById(R.id.requestAcc);
+        requestAccButton = findViewById(R.id.accButton);
 
         // Button
         button = findViewById(R.id.button);
@@ -541,16 +566,17 @@ public class PatientMainActivity extends Activity {
             case SCANNING: {
                 statusTextView.setText(R.string.scanning);
                 button.setText(R.string.stop_scanning);
-                requestAccTextView.setVisibility(View.GONE);
+                requestAccButton.setVisibility(View.GONE);
                 if (checkbox.isChecked() && deviceAddress != null)
                     savedAddressTextView.setText(R.string.saved);
                 accGraph.setVisibility(View.GONE);
+                heartRateGraph.setVisibility(View.GONE);
                 readingAccData = false;
                 break;
             }
             case DISCONNECTED: {
                 statusTextView.setText(R.string.disconnected);
-                requestAccTextView.setVisibility(View.GONE);
+                requestAccButton.setVisibility(View.GONE);
                 dataTextContainer.setVisibility(View.GONE);
                 if (deviceAddress != null) {
                     savedAddressTextView.setText(R.string.saved);
@@ -558,15 +584,17 @@ public class PatientMainActivity extends Activity {
                 } else
                     button.setText(R.string.start_scan);
                 accGraph.setVisibility(View.GONE);
+                heartRateGraph.setVisibility(View.GONE);
                 readingAccData = false;
                 break;
             }
             case CONNECTED: {
                 checkbox.setVisibility(View.GONE);
-                requestAccTextView.setVisibility(View.VISIBLE);
+                requestAccButton.setVisibility(View.VISIBLE);
                 statusTextView.setText(R.string.connected);
                 button.setText(R.string.disconnect);
                 savedAddressTextView.setText(null);
+                heartRateGraph.setVisibility(View.VISIBLE);
                 break;
             }
         }
@@ -609,6 +637,11 @@ public class PatientMainActivity extends Activity {
     }
 
     public void buttonHelp_onClick(View view) {
+        if(!mqttEnabled) {
+            Toast.makeText(this, "Du er i offline-modus.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         sendMessageTroughMqttService(topicTX, formatMqttMessage("H"));
     }
 

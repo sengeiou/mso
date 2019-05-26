@@ -19,7 +19,7 @@
         android:layout_gravity="center_horizontal"/>
 
     <Space android:layout_width="wrap_content"
-        android:layout_height="@dimen/layout_spacing"/>
+        android:layout_height="24dp"/>
 
     <!-- Heart rate-->
     <LinearLayout
@@ -27,8 +27,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:padding="@dimen/padding"
-        android:layout_marginTop="@dimen/padding"
+
         android:orientation="vertical">
 
         <!-- Heart rate (container)-->
@@ -84,7 +83,7 @@
     </LinearLayout>
 
     <Space android:layout_width="wrap_content"
-        android:layout_height="@dimen/layout_spacing"/>
+        android:layout_height="10dp"/>
 
     <ScrollView
         android:layout_width="fill_parent"
@@ -94,6 +93,20 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+            <Space android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:text="Bluetooth:"/>
 
             <!-- Connection status-->
             <LinearLayout
@@ -200,9 +213,6 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/padding" />
 
             <!-- Button-->
             <Button
@@ -220,11 +230,21 @@
 
             <Space
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/layout_spacing" />
+                android:layout_height="10dp" />
 
-            <Space
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+            <Space android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
+
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="24dp" />
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:text="Behovknapper:"/>
 
             <Button
                 android:id="@+id/button_help"
@@ -239,9 +259,25 @@
                 android:textAllCaps="false"
                 android:textColor="@android:color/white" />
 
-            <Space
+            <Space android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+            <Space android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
+
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="24dp" />
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:text="Feilsøking:"/>
+
+            <Space android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
 
             <ListView
                 android:id="@+id/listview_log"
@@ -252,20 +288,72 @@
                 android:stackFromBottom="true"
                 android:transcriptMode="alwaysScroll"/>
 
+            <Space android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
             <Space
                 android:layout_width="wrap_content"
-                android:layout_height="24dp" />
+                android:layout_height="10dp" />
 
             <TextView
-                android:id="@+id/requestAcc"
-                android:clickable="true"
-                android:visibility="gone"
-                android:focusable="true"
-                android:onClick="requestAccData_onClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/request_accelerometer_data"/>
+                android:textColor="@android:color/black"
+                android:text="Puls:"/>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="10dp" />
+
+            <com.jjoe64.graphview.GraphView
+                android:layout_width="match_parent"
+                android:layout_height="200dip"
+                app:seriesColor="@color/colorPrimary"
+                android:id="@+id/bpm_graph" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="10dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="10dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black"
+                    android:text="Akselerometer:"/>
+                <!-- Button-->
+                <Button
+                    android:id="@+id/accButton"
+                    android:layout_alignParentEnd="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:visibility="gone"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/custom_button"
+                    android:onClick="requestAccData_onClick"
+                    android:paddingLeft="@dimen/padding"
+                    android:paddingRight="@dimen/padding"
+                    android:text="Vis/skjul"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white" />
+            </RelativeLayout>
 
             <!-- Accelerometer data-->
             <com.jjoe64.graphview.GraphView
@@ -277,7 +365,13 @@
 
             <Space
                 android:layout_width="wrap_content"
-                android:layout_height="24dp" />
+                android:layout_height="10dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
