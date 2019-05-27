@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +36,10 @@ public class PatientActivity extends AppCompatActivity {
     private final static String TAG = PatientActivity.class.getSimpleName();
     private String patientUsername;
     private String patientName;
-    private static String filename = "";
+    private static String patientFilename = "";
+    private static String filename = "patients.txt";
+    private ArrayList<Patient> arrayList;
+    private int patientCount = 0;
 
     GraphView graph;
     LineGraphSeries<DataPoint> series;
@@ -48,6 +52,14 @@ public class PatientActivity extends AppCompatActivity {
     private Button newNoteButton;
     private EditText editTextNote;
     private TextView tvPulseInfo;
+    private LinearLayout llEditPatientName;
+    private EditText etPatientName;
+    private TextView tvUsername;
+    private TextView tvPatientName;
+    private LinearLayout llRequest;
+
+    // Program state
+    private boolean editingPatientName = false;
     private boolean addingNewNote = false;
 
     // MSO_LOG
@@ -65,16 +77,17 @@ public class PatientActivity extends AppCompatActivity {
         patientUsername = intent.getStringExtra("username");
         patientName = intent.getStringExtra("name");
         if(!patientUsername.equals(""))
-            filename = "patient" + patientUsername + ".txt";
+            patientFilename = "patient" + patientUsername + ".txt";
+        boolean request = intent.getBooleanExtra("request", false);
 
         // TODO: define action as static string
         IntentFilter filter = new IntentFilter("MQTT_ON_RECIEVE");
         this.registerReceiver(new PatientActivity.Receiver(), filter);
 
-        TextView tvUsername = findViewById(R.id.patient_username);
+        tvUsername = findViewById(R.id.patient_username);
         tvUsername.setText(patientUsername);
 
-        TextView tvPatientName = findViewById(R.id.patient_name);
+        tvPatientName = findViewById(R.id.patient_name);
         tvPatientName.setText(patientName);
         initializeGraph();
 
@@ -102,6 +115,17 @@ public class PatientActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        // File IO for patient list
+        arrayList = new ArrayList<>();
+        loadPatientDataFromFile();
+
+        llEditPatientName = (LinearLayout) findViewById(R.id.edit_patient_name_linear_layout);
+        etPatientName = (EditText) findViewById(R.id.patient_name_edit_text);
+        llRequest = (LinearLayout) findViewById(R.id.request);
+
+        if(request)
+            llRequest.setVisibility(View.VISIBLE);
     }
 
     private class Receiver extends BroadcastReceiver {
@@ -121,14 +145,13 @@ public class PatientActivity extends AppCompatActivity {
             temp = temp.substring(temp.indexOf("[") + 1);
             String value = temp.substring(0, temp.indexOf("]"));
 
-            Log.i(TAG, "MQTT: Userame: " + username);
+            Log.i(TAG, "MQTT: Userame: " + username + " this username = " + patientUsername);
             Log.i(TAG, "MQTT: Full patient name: " + patientName);
             Log.i(TAG, "MQTT: Value: " + value);
 
             if(username.equals(patientUsername)) {
                 if(value.charAt(0)=='H') {
-                    Toast.makeText(PatientActivity.this, patientName +
-                            "Trenger akutt nødhjelp.", Toast.LENGTH_LONG).show();
+                    llRequest.setVisibility(View.VISIBLE);
                     return;
                 } else if (isInteger(value)){
                     TextView hr = findViewById(R.id.heart_rate);
@@ -139,6 +162,16 @@ public class PatientActivity extends AppCompatActivity {
                     }
                     catch (NumberFormatException e) {
                         hrValue = 0;
+                    }
+                }
+            }
+
+            if (value.charAt(0)=='H') {
+                for(Patient p: arrayList) {
+                    if(username.equals(p.getUsername())) {
+                        Toast.makeText(PatientActivity.this, p.getName() +
+                                " trenger akutt nødhjelp.", Toast.LENGTH_LONG).show();
+                        break;
                     }
                 }
             }
@@ -168,7 +201,7 @@ public class PatientActivity extends AppCompatActivity {
         int result = r.nextInt(high-low) + low;
 
         // Some extra logic so random value does not exceed possible values
-        if(y < 50 || y > 130)
+        if(y < 60 || y > 110)
             invert =! invert;
         if(invert)
             y+=result;
@@ -236,6 +269,7 @@ public class PatientActivity extends AppCompatActivity {
         if(!addingNewNote) {
             addingNewNote = true;
             editTextNote.setVisibility(View.VISIBLE);
+            editTextNote.setText("");
             newNoteButton.setText(getResources().getString(R.string.save_patient_name));
         } else {
             addingNewNote = false;
@@ -268,7 +302,7 @@ public class PatientActivity extends AppCompatActivity {
         savePatientNotes();
     }
 
-    private void writeToFile(String data, Context context) {
+    private void writeToFile(String filename, String data, Context context) {
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE));
             outputStreamWriter.write(data);
@@ -280,7 +314,7 @@ public class PatientActivity extends AppCompatActivity {
         }
     }
 
-    private String readFromFile(Context context) {
+    private String readFromFile(String filename, Context context) {
         String ret = "";
 
         try {
@@ -317,12 +351,12 @@ public class PatientActivity extends AppCompatActivity {
             sb.append("/>");
         }
         String data = sb.toString();
-        writeToFile(data, App.getAppContext());
+        writeToFile(patientFilename, data, App.getAppContext());
     }
 
     private void loadPatientNotes() {
         // Read from file
-        String data = readFromFile(App.getAppContext());
+        String data = readFromFile(patientFilename, App.getAppContext());
 
         // Count notes
         String findStr = "/>";
@@ -346,5 +380,112 @@ public class PatientActivity extends AppCompatActivity {
 
         // update UI
         msoLogAdapter.notifyDataSetChanged();
+    }
+
+    private void savePatientDataToFile() {
+        StringBuilder sb = new StringBuilder();
+        for(Patient p: arrayList) {
+            sb.append("<Patient>\n");
+
+            // Patient ID
+            sb.append("     <id value=");
+            sb.append(p.getId());
+            sb.append("/>\n");
+
+            // Patient name
+            sb.append("     <name value=");
+            sb.append(p.getName());
+            sb.append("/>\n");
+
+            // Patient username
+            sb.append("     <username value=");
+            sb.append(p.getUsername());
+            sb.append("/>\n");
+
+            sb.append("</Patient>\n");
+        }
+
+        String data = sb.toString();
+        writeToFile(filename, data, App.getAppContext());
+    }
+
+    private void loadPatientDataFromFile() {
+        // TODO: This is the same logic as in PersonellMainActivity, which is unfortunate
+        // Read from file
+        String data = readFromFile(filename, App.getAppContext());
+
+        // Count patients
+        String findStr = "<Patient>";
+        int count = data.split(findStr, -1).length-1;
+
+        // Clear list
+        arrayList.clear();
+        patientCount = 0;
+
+        // Parse patient data from file
+        for(int i = 0; i < count; i++) {
+            int id = 0;
+            String name = "";
+            String username = "";
+
+            data = data.substring(data.indexOf("id value="));
+            // Find ID
+            String idTemp = data.substring(data.indexOf("=") + 1, data.indexOf("/>"));
+            if(isInteger(idTemp)){
+                id = Integer.parseInt(idTemp);
+            } else
+                continue;
+
+            data = data.substring(data.indexOf("name value="));
+            // Find name
+            String nameTemp = data.substring(data.indexOf("=") + 1, data.indexOf("/>"));
+            if(nameTemp.equals("null")){
+                name = "Eksempelnavn";
+            } else
+                name = nameTemp;
+
+            data = data.substring(data.indexOf("username value="));
+            // Find username
+            String usernameTemp = data.substring(data.indexOf("=") + 1, data.indexOf("/>"));
+            if(usernameTemp.equals("null")){
+                username = "patient" + Integer.toString(patientCount + 1);
+            } else {
+                username = usernameTemp;
+            }
+
+            patientCount++;
+            Patient patient = new Patient(patientCount, username, name,"--");
+            arrayList.add(patient);
+        }
+    }
+
+    public void buttonEditPatientName_onClick(View view) {
+        if(!editingPatientName) {
+            editingPatientName = true;
+            llEditPatientName.setVisibility(View.VISIBLE);
+            etPatientName.setText(patientName);
+        }
+    }
+
+    public void buttonSavePatientName_onClick(View view) {
+        String newName = etPatientName.getText().toString();
+        if(!newName.equals("")) {
+            patientName = newName;
+
+            for(Patient p: arrayList) {
+                if(p.getUsername().equals(patientUsername)){
+                    // Patient found
+                    p.setName(patientName);
+                    tvPatientName.setText(patientName);
+                    savePatientDataToFile();
+                }
+            }
+        } else {
+            Toast.makeText(PatientActivity.this, "Ugyldig navn.",
+                    Toast.LENGTH_LONG).show();
+        }
+
+        editingPatientName = false;
+        llEditPatientName.setVisibility(View.GONE);
     }
 }

@@ -58,10 +58,11 @@ public class PersonnelMainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Patient patient = adapter.getItem(position);
-                patient.setRequest(false);
                 Intent intent = new Intent(PersonnelMainActivity.this,
                         PatientActivity.class);
                 // Based on item add info to intent
+                intent.putExtra("request", patient.getRequest());
+                patient.setRequest(false);
                 intent.putExtra("username", patient.getUsername());
                 intent.putExtra("name", patient.getName());
                 savePatientDataToFile();
@@ -73,13 +74,15 @@ public class PersonnelMainActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            int pos, long id) {
-                arrayList.remove(pos);
-                patientCount--;
-                discoveredPatients.setText(String.valueOf(patientCount));
-                adapter.notifyDataSetChanged();
-                Toast.makeText(PersonnelMainActivity.this, "Slettet pasient.",
-                        Toast.LENGTH_LONG).show();
-                savePatientDataToFile();
+                if(!arrayList.get(pos).getRequest()) {
+                    arrayList.remove(pos);
+                    patientCount--;
+                    discoveredPatients.setText(String.valueOf(patientCount));
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(PersonnelMainActivity.this, "Slettet pasient.",
+                            Toast.LENGTH_LONG).show();
+                    savePatientDataToFile();
+                }
                 return true;
             }
         });
@@ -119,6 +122,11 @@ public class PersonnelMainActivity extends AppCompatActivity {
             Log.i(TAG, "MQTT: Userame: " + username);
             Log.i(TAG, "MQTT: Full patient name: " + patientName);
             Log.i(TAG, "MQTT: Value: " + value);
+
+            if(username.equals(""))
+                return;
+            else if(patientName.equals(""))
+                patientName = username;
 
             for(Patient p: arrayList) {
                 if(p.getUsername().equals(username)){

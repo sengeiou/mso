@@ -27,7 +27,53 @@
         android:textSize="20sp"
         android:gravity="center_horizontal"
         android:id="@+id/patient_name"
-        android:hint="@string/sample_name" />
+        android:hint="@string/sample_name"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="buttonEditPatientName_onClick"/>
+
+    <LinearLayout
+        android:id="@+id/request"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/custom_list_item_warning">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="6dp"
+            android:textColor="@android:color/white"
+            android:text="Trenger akutt nødhjelp."/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/edit_patient_name_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="vertical">
+        <EditText
+            android:id="@+id/patient_name_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/sample_name"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:background="@drawable/custom_button"
+            android:onClick="buttonSavePatientName_onClick"
+            android:paddingLeft="@dimen/padding"
+            android:paddingRight="@dimen/padding"
+            android:text="@string/save_patient_name"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
 
     <Space android:layout_width="wrap_content"
         android:layout_height="10dp"/>
