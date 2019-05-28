@@ -198,7 +198,7 @@ public class PatientActivity extends AppCompatActivity {
                 } else if(value.charAt(0)=='h') {
                     llAssistanceRequest.setVisibility(View.VISIBLE);
                     return;
-                } else if (isInteger(value)){
+                } else if (App.isInteger(value)){
                     TextView hr = findViewById(R.id.heart_rate);
                     hr.setText(value);
                     try {
@@ -291,22 +291,6 @@ public class PatientActivity extends AppCompatActivity {
         graph.addSeries(series);
     }
 
-    private Boolean isInteger(String s) {
-        return isInteger(s,10);
-    }
-
-    private Boolean isInteger(String s, int radix) {
-        if(s.isEmpty()) return false;
-        for(int i = 0; i < s.length(); i++) {
-            if(i == 0 && s.charAt(i) == '-') {
-                if(s.length() == 1) return false;
-                else continue;
-            }
-            if(Character.digit(s.charAt(i),radix) < 0) return false;
-        }
-        return true;
-    }
-
     private void initializeGraph() {
         graph = (GraphView) findViewById(R.id.graph);
         graph.setCursorMode(true);
@@ -354,9 +338,7 @@ public class PatientActivity extends AppCompatActivity {
 
     private void MSO_LOG(String message) {
         msoLoggedItemsCounter++; // count logged items
-
         Date currentTime = Calendar.getInstance().getTime();
-
         // Format message and add to array list
         String LOG_MESSAGE = "#"
                 + String.valueOf(msoLoggedItemsCounter)
@@ -498,7 +480,7 @@ public class PatientActivity extends AppCompatActivity {
             data = data.substring(data.indexOf("id value="));
             // Find ID
             String idTemp = data.substring(data.indexOf("=") + 1, data.indexOf("/>"));
-            if(isInteger(idTemp)){
+            if(App.isInteger(idTemp)){
                 id = Integer.parseInt(idTemp);
             } else
                 continue;

@@ -174,21 +174,10 @@ public class PersonnelMainActivity extends AppCompatActivity {
     }
 
     public void addPatientBtn_onClick(View view) {
-        patientCount++;
-        String usernameTemp = "patient" + Integer.toString(patientCount);
-
-        // TODO: Same username should not be created more than once
-
-        for(Patient p: arrayList) {
-            if(p.getUsername().equals(usernameTemp)){
-                // Patient username already exist
-                // return;
-            }
-        }
-
         // Add new Patient
+        patientCount++;
         Patient patient = new Patient(patientCount,
-                usernameTemp,
+                generateNewUsername(),
                 "Eksempelnavn",
                 "--");
         arrayList.add(patient);
@@ -288,24 +277,18 @@ public class PersonnelMainActivity extends AppCompatActivity {
 
             Log.i(TAG, "FILEIO: Parsing patient " + (i + 1) + "/" + count);
 
-            // TODO: Add more sections (now id, name, username)
-
             data = data.substring(data.indexOf("id value="));
             // Find ID
             String idTemp = data.substring(data.indexOf("=") + 1, data.indexOf("/>"));
-            Log.i(TAG, "FILEIO: idTemp is currently: " + idTemp);
-            if(isInteger(idTemp)){
-                Log.i(TAG, "FILEIO: idTemp is a integer.");
-                id = Integer.parseInt(idTemp);
+            if(App.isInteger(idTemp)){
+                id = patientCount + 1;
             } else
                 continue;
 
             data = data.substring(data.indexOf("name value="));
             // Find name
             String nameTemp = data.substring(data.indexOf("=") + 1, data.indexOf("/>"));
-            Log.i(TAG, "FILEIO: nameTemp is currently: " + nameTemp);
             if(nameTemp.equals("null")){
-                Log.i(TAG, "FILEIO: Patient name is empty.");
                 name = "Eksempelnavn";
             } else
                 name = nameTemp;
@@ -313,9 +296,7 @@ public class PersonnelMainActivity extends AppCompatActivity {
             data = data.substring(data.indexOf("username value="));
             // Find username
             String usernameTemp = data.substring(data.indexOf("=") + 1, data.indexOf("/>"));
-            Log.i(TAG, "FILEIO: usernameTemp is currently: " + usernameTemp);
             if(usernameTemp.equals("null")){
-                Log.i(TAG, "FILEIO: Patient username is empty. Example username will be used");
                 username = "patient" + Integer.toString(patientCount + 1);
             } else {
                 username = usernameTemp;
@@ -331,19 +312,28 @@ public class PersonnelMainActivity extends AppCompatActivity {
         discoveredPatients.setText(String.valueOf(patientCount));
     }
 
-    private Boolean isInteger(String s) {
-        return isInteger(s,10);
-    }
+    private String generateNewUsername() {
+        int numberOfTests = 100;
+        int patientId = 1;
+        String generatedUsername = "patient" + String.valueOf(patientId);
 
-    private Boolean isInteger(String s, int radix) {
-        if(s.isEmpty()) return false;
-        for(int i = 0; i < s.length(); i++) {
-            if(i == 0 && s.charAt(i) == '-') {
-                if(s.length() == 1) return false;
-                else continue;
+        boolean usernameIsOccupied = false;
+        for(int i = 0; i < numberOfTests; i++) {
+            for(Patient p: arrayList) {
+                if(p.getUsername().equals(generatedUsername)) {
+                    usernameIsOccupied = true;
+                    Log.i(TAG, "GENERATE: iteration no " + String.valueOf(i) + " Username" + generatedUsername + "is occupied");
+                }
             }
-            if(Character.digit(s.charAt(i),radix) < 0) return false;
+            if(usernameIsOccupied) {
+                patientId++;
+                generatedUsername = "patient" + String.valueOf(patientId);
+                usernameIsOccupied = false;
+            } else {
+                return generatedUsername;
+            }
+
         }
-        return true;
+        return generatedUsername;
     }
 }

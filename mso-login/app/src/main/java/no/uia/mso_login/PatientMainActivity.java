@@ -301,7 +301,7 @@ public class PatientMainActivity extends Activity {
         hr.setText(String.valueOf(y));
         hrValue = y;
         sendMessageTroughMqttService(topicTX, formatMqttMessage(String.valueOf(hrValue)));
-        determineHeartRateInfoText();
+        updateHeartRateInfoText();
     }
 
     private void addPointToAccGraph(int value) {
@@ -488,23 +488,7 @@ public class PatientMainActivity extends Activity {
         return intentFilter;
     }
 
-    private Boolean isInteger(String s) {
-        return isInteger(s,10);
-    }
-
-    private Boolean isInteger(String s, int radix) {
-        if(s.isEmpty()) return false;
-        for(int i = 0; i < s.length(); i++) {
-            if(i == 0 && s.charAt(i) == '-') {
-                if(s.length() == 1) return false;
-                else continue;
-            }
-            if(Character.digit(s.charAt(i),radix) < 0) return false;
-        }
-        return true;
-    }
-
-    // interpret and display data received from device
+    // Interpret and display data received from device
     private void displayData(String data) {
         if (data == null) {
             return;
@@ -513,9 +497,9 @@ public class PatientMainActivity extends Activity {
         // Show raw data in MSO_LOG
         MSO_LOG("Data received from device: " + data);
 
-        // Show raw data in info text (top of UI)
-        dataTextContainer.setVisibility(View.VISIBLE);
-        dataTextView.setText(data);
+        // Show last received data in info text (top of UI)
+        // dataTextContainer.setVisibility(View.VISIBLE);
+        // dataTextView.setText(data);
 
         // Check what type of data has arrived
         if (data.charAt(0) == 'B') {
@@ -525,10 +509,11 @@ public class PatientMainActivity extends Activity {
             heartRateInfoTextView.setVisibility(View.VISIBLE);
 
             // Indicate whether HR value is normal or not
-            if(isInteger(heartRateData)) {
+            // TODO: check that isInteger can be called from App
+            if(App.isInteger(heartRateData)) {
                 hrValue = Integer.parseInt(heartRateData);
                 addPointToHeartRateGraph(hrValue);
-                determineHeartRateInfoText();
+                updateHeartRateInfoText();
             }
             sendMessageTroughMqttService(topicTX, formatMqttMessage(heartRateData));
             return;
@@ -538,14 +523,14 @@ public class PatientMainActivity extends Activity {
                 heartRateInfoTextView.setVisibility(View.VISIBLE);
                 heartRateInfoTextView.setText(R.string.pulse_is_not_updated);
                 heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorWarning));
-                // TODO: inform personnel that heart rate data currently isn`t updating
                 sendMessageTroughMqttService(topicTX, formatMqttMessage("--"));
                 return;
             }
         } else if (data.charAt(0) == 'A') {
             // Received accelerometer data
             String accData = data.substring(5);
-            if(isInteger(accData)) {
+            // TODO: check that isInteger can be called from App
+            if(App.isInteger(accData)) {
                 accValue = Integer.parseInt(accData);
                 addPointToAccGraph(accValue);
             }
@@ -555,13 +540,14 @@ public class PatientMainActivity extends Activity {
         // Physical button pressed on device?
         if (data.equals("HELP")) { // Emergency request
             sendMessageTroughMqttService(topicTX, formatMqttMessage("H"));
-        }
-        else if (data.equals("help")) { // Assistance request
+        } else if (data.equals("help")) { // Assistance request
             sendMessageTroughMqttService(topicTX, formatMqttMessage("h"));
+        } else if (data.equals("FALL")) { // Fall was detected by device
+            sendMessageTroughMqttService(topicTX, formatMqttMessage("F"));
         }
     }
 
-    private void determineHeartRateInfoText() {
+    private void updateHeartRateInfoText() {
         if(hrValue > 100) { // high HR
             heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorSerious));
             heartRateInfoTextView.setText(R.string.pulse_is_high);

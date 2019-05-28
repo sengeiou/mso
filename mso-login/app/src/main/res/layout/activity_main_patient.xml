@@ -473,7 +473,7 @@
                 android:layout_height="50dp"
                 android:divider="@android:color/transparent"
                 android:dividerHeight="5dp"
-                android:stackFromBottom="false"
+                android:stackFromBottom="true"
                 android:transcriptMode="alwaysScroll"/>
 
             <Space
