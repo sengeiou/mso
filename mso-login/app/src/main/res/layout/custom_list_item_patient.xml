@@ -87,14 +87,31 @@
             android:text="@string/not_updating"/>
     </LinearLayout>
 
-    <Space android:layout_height="5dp"
-        android:layout_width="wrap_content"/>
-
     <LinearLayout
-        android:id="@+id/request"
+        android:id="@+id/emergency_request"
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/custom_list_item_serious">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="6dp"
+            android:textColor="@android:color/white"
+            android:text="@string/emergency_request"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/assistance_request"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:background="@drawable/custom_list_item_warning">
         <TextView
             android:layout_width="wrap_content"
@@ -105,6 +122,6 @@
             android:paddingTop="5dp"
             android:paddingBottom="6dp"
             android:textColor="@android:color/white"
-            android:text="Trenger akutt nødhjelp."/>
+            android:text="@string/assistance_request"/>
     </LinearLayout>
 </LinearLayout>

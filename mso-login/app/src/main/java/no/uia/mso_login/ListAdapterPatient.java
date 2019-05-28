@@ -3,7 +3,6 @@ package no.uia.mso_login;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,8 @@ public class ListAdapterPatient extends ArrayAdapter<Patient> {
         String username = "(" + getItem(position).getUsername() + ")";
         String heartRate = getItem(position).getHeartRate();
         String patientName = getItem(position).getName();
-        boolean request = getItem(position).getRequest();
+        boolean emergencyRequest = getItem(position).getEmergencyRequest();
+        boolean assistanceRequest = getItem(position).getAssistanceRequest();
 
         Patient patient = new Patient(id, username, patientName, heartRate);
         LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -52,7 +52,8 @@ public class ListAdapterPatient extends ArrayAdapter<Patient> {
         TextView tvHeartRate = (TextView) convertView.findViewById(R.id.heart_rate);
         TextView tvId = (TextView) convertView.findViewById(R.id.patient_id);
         TextView tvPulseInfo = (TextView) convertView.findViewById(R.id.heart_rate_info);
-        LinearLayout lyRequest = (LinearLayout) convertView.findViewById(R.id.request);
+        LinearLayout lyEmergencyRequest = (LinearLayout) convertView.findViewById(R.id.emergency_request);
+        LinearLayout lyAssistanceRequest = (LinearLayout) convertView.findViewById(R.id.assistance_request);
 
         int hrValue = 0;
         if(isInteger(heartRate)){
@@ -73,10 +74,15 @@ public class ListAdapterPatient extends ArrayAdapter<Patient> {
             tvPulseInfo.setTextColor(Color.parseColor("#008577"));
         }
 
-        if(request) {
-            lyRequest.setVisibility(View.VISIBLE);
+        if(emergencyRequest) {
+            lyEmergencyRequest.setVisibility(View.VISIBLE);
         } else
-            lyRequest.setVisibility(View.GONE);
+            lyEmergencyRequest.setVisibility(View.GONE);
+
+        if(assistanceRequest) {
+            lyAssistanceRequest.setVisibility(View.VISIBLE);
+        } else
+            lyAssistanceRequest.setVisibility(View.GONE);
 
         tvId.setText(strId);
         tvUsername.setText(username);

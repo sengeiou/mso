@@ -33,7 +33,26 @@
         android:onClick="buttonEditPatientName_onClick"/>
 
     <LinearLayout
-        android:id="@+id/request"
+        android:id="@+id/emergency_request"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/custom_list_item_serious">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="6dp"
+            android:textColor="@android:color/white"
+            android:text="@string/emergency_request"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/assistance_request"
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_marginTop="10dp"
@@ -48,7 +67,7 @@
             android:paddingTop="5dp"
             android:paddingBottom="6dp"
             android:textColor="@android:color/white"
-            android:text="Trenger akutt nødhjelp."/>
+            android:text="@string/assistance_request"/>
     </LinearLayout>
 
     <LinearLayout

@@ -251,47 +251,35 @@
             <Space android:layout_width="wrap_content"
                 android:layout_height="@dimen/layout_spacing"/>
 
-            <Button
-                android:id="@+id/button_help"
-                android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/custom_button_grey"
-                android:onClick="buttonHelp_onClick"
-                android:paddingLeft="@dimen/padding"
-                android:paddingRight="@dimen/padding"
-                android:text="Nødhjelp"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white" />
-
-            <Space android:layout_width="wrap_content"
-                android:layout_height="10dp"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
-
-            <Space android:layout_width="wrap_content"
-                android:layout_height="10dp"/>
-
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                android:text="Feilsøking:"/>
-
-            <Space android:layout_width="wrap_content"
-                android:layout_height="10dp"/>
-
-            <ListView
-                android:id="@+id/listview_log"
-                android:layout_width="fill_parent"
-                android:layout_height="60dp"
-                android:divider="@android:color/transparent"
-                android:dividerHeight="5dp"
-                android:stackFromBottom="true"
-                android:transcriptMode="alwaysScroll"/>
+                android:layout_gravity="center_horizontal">
+                <Button
+                    android:id="@+id/button_assistance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:background="@drawable/custom_list_item_warning"
+                    android:onClick="buttonAssistance_onClick"
+                    android:paddingLeft="@dimen/padding"
+                    android:paddingRight="@dimen/padding"
+                    android:text="@string/assistance"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white" />
+                <Space android:layout_width="20dp"
+                    android:layout_height="wrap_content"/>
+                <Button
+                    android:id="@+id/button_help"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:background="@drawable/custom_list_item_serious"
+                    android:onClick="buttonHelp_onClick"
+                    android:paddingLeft="@dimen/padding"
+                    android:paddingRight="@dimen/padding"
+                    android:text="@string/emergency"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
 
             <Space android:layout_width="wrap_content"
                 android:layout_height="10dp"/>
@@ -428,7 +416,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Fullt navn: " />
+                        android:text="@string/full_name" />
                     <Space
                         android:layout_width="@dimen/text_spacing"
                         android:layout_height="wrap_content" />
@@ -449,7 +437,6 @@
                 android:layout_height="wrap_content" />
             <Button
                 android:id="@+id/edit_button"
-                android:layout_alignParentEnd="true"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_gravity="center"
@@ -468,6 +455,34 @@
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"/>
 
+            <Space android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:text="@string/debugging"/>
+
+            <Space android:layout_width="wrap_content"
+                android:layout_height="10dp"/>
+
+            <ListView
+                android:id="@+id/listview_log"
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="5dp"
+                android:stackFromBottom="false"
+                android:transcriptMode="alwaysScroll"/>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="10dp" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

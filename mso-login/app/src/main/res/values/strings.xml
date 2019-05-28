@@ -21,6 +21,8 @@
     <string name="pulse_is_low">Lav pulsverdi</string>
     <string name="pulse_is_normal">Normal hvilepuls</string>
     <string name="log">Feilsøking: </string>
+    <string name="debugging">Feilsøking: </string>
+    <string name="full_name">Navn: </string>
 
     <!-- Buttons-->
     <string name="start_scan">Søk</string>
@@ -70,4 +72,10 @@
 
     <!-- Notification-->
     <string name="connected_trough_cloudmqtt">Overfører data via CloudMQTT i bakgrunnen</string>
+
+    <!-- Requests-->
+    <string name="emergency_request">Forespør akutt nødhjelp!</string>
+    <string name="assistance_request">Forespør assistanse.</string>
+    <string name="assistance">Assistanse</string>
+    <string name="emergency">Nødhjelp</string>
 </resources>

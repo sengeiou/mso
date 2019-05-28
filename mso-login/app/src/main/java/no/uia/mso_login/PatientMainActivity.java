@@ -301,7 +301,7 @@ public class PatientMainActivity extends Activity {
         hr.setText(String.valueOf(y));
         hrValue = y;
         sendMessageTroughMqttService(topicTX, formatMqttMessage(String.valueOf(hrValue)));
-        updatePulseInfoText();
+        determineHeartRateInfoText();
     }
 
     private void addPointToAccGraph(int value) {
@@ -528,16 +528,7 @@ public class PatientMainActivity extends Activity {
             if(isInteger(heartRateData)) {
                 hrValue = Integer.parseInt(heartRateData);
                 addPointToHeartRateGraph(hrValue);
-                if(hrValue > 100) { // high HR
-                    heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorSerious));
-                    heartRateInfoTextView.setText(R.string.pulse_is_high);
-                } else if(hrValue < 50) { // low HR
-                    heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorSerious));
-                    heartRateInfoTextView.setText(R.string.pulse_is_low);
-                } else { // normal HR
-                    heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorHeartRate));
-                    heartRateInfoTextView.setText(R.string.pulse_is_normal);
-                }
+                determineHeartRateInfoText();
             }
             sendMessageTroughMqttService(topicTX, formatMqttMessage(heartRateData));
             return;
@@ -562,11 +553,24 @@ public class PatientMainActivity extends Activity {
         }
 
         // Physical button pressed on device?
-        if (data.equals("HELP")) {
+        if (data.equals("HELP")) { // Emergency request
             sendMessageTroughMqttService(topicTX, formatMqttMessage("H"));
         }
-        else if (data.equals("help")) {
-            sendMessageTroughMqttService(topicTX, formatMqttMessage("H"));
+        else if (data.equals("help")) { // Assistance request
+            sendMessageTroughMqttService(topicTX, formatMqttMessage("h"));
+        }
+    }
+
+    private void determineHeartRateInfoText() {
+        if(hrValue > 100) { // high HR
+            heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorSerious));
+            heartRateInfoTextView.setText(R.string.pulse_is_high);
+        } else if(hrValue < 50) { // low HR
+            heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorSerious));
+            heartRateInfoTextView.setText(R.string.pulse_is_low);
+        } else { // normal HR
+            heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorHeartRate));
+            heartRateInfoTextView.setText(R.string.pulse_is_normal);
         }
     }
 
@@ -744,8 +748,15 @@ public class PatientMainActivity extends Activity {
             Toast.makeText(this, "Du er i offline-modus.", Toast.LENGTH_SHORT).show();
             return;
         }
-
         sendMessageTroughMqttService(topicTX, formatMqttMessage("H"));
+    }
+
+    public void buttonAssistance_onClick(View view) {
+        if(!mqttEnabled) {
+            Toast.makeText(this, "Du er i offline-modus.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        sendMessageTroughMqttService(topicTX, formatMqttMessage("h"));
     }
 
     private void MSO_LOG(String message) {
@@ -818,23 +829,13 @@ public class PatientMainActivity extends Activity {
             heartRateGraph.setVisibility(View.VISIBLE);
             startSimulation();
             tvSimulate.setText(getResources().getString(R.string.stop_simulation));
+            heartRateInfoTextView.setVisibility(View.VISIBLE);
         } else {
             simulatingHeartRate = false;
             stopSimulation();
             tvSimulate.setText(getResources().getString(R.string.simulate_graph));
-        }
-    }
-
-    private void updatePulseInfoText() {
-        if(hrValue < 50) {
-            heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorSerious));
-            heartRateInfoTextView.setText(getResources().getString(R.string.pulse_is_low));
-        } else if(hrValue > 100) {
-            heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorSerious));
-            heartRateInfoTextView.setText(getResources().getString(R.string.pulse_is_high));
-        } else {
-            heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorPrimary));
-            heartRateInfoTextView.setText(getResources().getString(R.string.pulse_is_normal));
+            heartRateInfoTextView.setText(getResources().getString(R.string.pulse_is_not_updated));
+            heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorWarning));
         }
     }
 }

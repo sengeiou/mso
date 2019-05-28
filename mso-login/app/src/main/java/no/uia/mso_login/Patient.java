@@ -5,7 +5,8 @@ public class Patient {
     private String username;
     private String patientName;
     private String heartRate;
-    private boolean request = false;
+    private boolean emergencyRequest = false;
+    private boolean assistanceRequest = false;
 
     public Patient(int id, String username, String patientName, String heartRate) {
         this.id = id;
@@ -18,9 +19,13 @@ public class Patient {
         return id;
     }
 
-    public boolean getRequest() {return request; }
+    public boolean getEmergencyRequest() {return emergencyRequest; }
 
-    public void setRequest(boolean r) {this.request = r;}
+    public void setEmergencyRequest(boolean b) {this.emergencyRequest = b;}
+
+    public boolean getAssistanceRequest() {return assistanceRequest; }
+
+    public void setAssistanceRequest(boolean b) {this.assistanceRequest = b; }
 
     public String getName() {
         return patientName;

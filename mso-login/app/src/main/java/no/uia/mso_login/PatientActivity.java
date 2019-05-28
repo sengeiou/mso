@@ -58,7 +58,8 @@ public class PatientActivity extends AppCompatActivity {
     private TextView tvUsername;
     private TextView tvPatientName;
     private TextView tvSimulate;
-    private LinearLayout llRequest;
+    private LinearLayout llEmergencyRequest;
+    private LinearLayout llAssistanceRequest;
 
     // Program state
     private boolean editingPatientName = false;
@@ -85,7 +86,8 @@ public class PatientActivity extends AppCompatActivity {
         patientName = intent.getStringExtra("name");
         if(!patientUsername.equals(""))
             patientFilename = "patient" + patientUsername + ".txt";
-        boolean request = intent.getBooleanExtra("request", false);
+        boolean emergencyRequest = intent.getBooleanExtra("emergencyRequest", false);
+        boolean assistanceRequest = intent.getBooleanExtra("assistanceRequest", false);
 
         // TODO: define action as static string
         IntentFilter filter = new IntentFilter("MQTT_ON_RECIEVE");
@@ -130,10 +132,13 @@ public class PatientActivity extends AppCompatActivity {
 
         llEditPatientName = (LinearLayout) findViewById(R.id.edit_patient_name_linear_layout);
         etPatientName = (EditText) findViewById(R.id.patient_name_edit_text);
-        llRequest = (LinearLayout) findViewById(R.id.request);
+        llEmergencyRequest = (LinearLayout) findViewById(R.id.emergency_request);
+        llAssistanceRequest = (LinearLayout) findViewById(R.id.assistance_request);
 
-        if(request)
-            llRequest.setVisibility(View.VISIBLE);
+        if(emergencyRequest)
+            llEmergencyRequest.setVisibility(View.VISIBLE);
+        if(assistanceRequest)
+            llAssistanceRequest.setVisibility(View.VISIBLE);
 
         mHRSimulationHandler = new Handler();
     }
@@ -188,7 +193,10 @@ public class PatientActivity extends AppCompatActivity {
 
             if(username.equals(patientUsername)) {
                 if(value.charAt(0)=='H') {
-                    llRequest.setVisibility(View.VISIBLE);
+                    llEmergencyRequest.setVisibility(View.VISIBLE);
+                    return;
+                } else if(value.charAt(0)=='h') {
+                    llAssistanceRequest.setVisibility(View.VISIBLE);
                     return;
                 } else if (isInteger(value)){
                     TextView hr = findViewById(R.id.heart_rate);

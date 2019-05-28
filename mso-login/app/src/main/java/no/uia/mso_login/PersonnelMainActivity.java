@@ -61,8 +61,10 @@ public class PersonnelMainActivity extends AppCompatActivity {
                 Intent intent = new Intent(PersonnelMainActivity.this,
                         PatientActivity.class);
                 // Based on item add info to intent
-                intent.putExtra("request", patient.getRequest());
-                patient.setRequest(false);
+                intent.putExtra("emergencyRequest", patient.getEmergencyRequest());
+                intent.putExtra("assistanceRequest", patient.getAssistanceRequest());
+                patient.setEmergencyRequest(false);
+                patient.setAssistanceRequest(false);
                 intent.putExtra("username", patient.getUsername());
                 intent.putExtra("name", patient.getName());
                 savePatientDataToFile();
@@ -74,7 +76,7 @@ public class PersonnelMainActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
                                            int pos, long id) {
-                if(!arrayList.get(pos).getRequest()) {
+                if(!arrayList.get(pos).getEmergencyRequest()) {
                     arrayList.remove(pos);
                     patientCount--;
                     discoveredPatients.setText(String.valueOf(patientCount));
@@ -133,9 +135,13 @@ public class PersonnelMainActivity extends AppCompatActivity {
                     // Patient already exist
 
                     if(value.charAt(0)=='H') {
-                        Toast.makeText(PersonnelMainActivity.this, patientName +
+                        Toast.makeText(PersonnelMainActivity.this, p.getName() +
                                 " trenger akutt nødhjelp.", Toast.LENGTH_LONG).show();
-                        p.setRequest(true);
+                        p.setEmergencyRequest(true);
+                        adapter.notifyDataSetChanged();
+                        return;
+                    } else if (value.charAt(0)=='h') {
+                        p.setAssistanceRequest(true);
                         adapter.notifyDataSetChanged();
                         return;
                     }
@@ -146,15 +152,20 @@ public class PersonnelMainActivity extends AppCompatActivity {
                 }
             }
 
-            if(value.charAt(0)=='H') {
-                Toast.makeText(PersonnelMainActivity.this, username +
-                        " trenger akutt nødhjelp.", Toast.LENGTH_LONG).show();
-                value = "--";
-            }
-
             // Add new Patient
             patientCount++;
             Patient patient = new Patient(patientCount, username, patientName, value);
+
+            if(value.charAt(0)=='H') {
+                Toast.makeText(PersonnelMainActivity.this, patientName +
+                        " trenger akutt nødhjelp.", Toast.LENGTH_LONG).show();
+                patient.setHeartRate("--");
+                patient.setEmergencyRequest(true);
+            } else if (value.charAt(0)=='h') {
+                patient.setHeartRate("--");
+                patient.setAssistanceRequest(true);
+            }
+
             arrayList.add(patient);
             adapter.notifyDataSetChanged();
             discoveredPatients.setText(String.valueOf(patientCount));
