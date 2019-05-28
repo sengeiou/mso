@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -43,7 +44,7 @@ public class PatientActivity extends AppCompatActivity {
 
     GraphView graph;
     LineGraphSeries<DataPoint> series;
-    private int y = 60;
+    private int y = 70;
     private int  hrValue = 0;
     private final static int xMax = 100;
     private int x = xMax;
@@ -56,6 +57,7 @@ public class PatientActivity extends AppCompatActivity {
     private EditText etPatientName;
     private TextView tvUsername;
     private TextView tvPatientName;
+    private TextView tvSimulate;
     private LinearLayout llRequest;
 
     // Program state
@@ -67,6 +69,11 @@ public class PatientActivity extends AppCompatActivity {
     private ArrayList<String> msoLogArrayList;
     ListAdapterMsoLog msoLogAdapter;
     private int msoLoggedItemsCounter = 0; // count logged items
+
+    // Heart Rate simulation
+    private int mHRSimulationTimeInterval = 500; // 600 ms
+    private Handler mHRSimulationHandler;
+    private boolean simulatingHeartRate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +102,7 @@ public class PatientActivity extends AppCompatActivity {
         editTextNote = findViewById(R.id.edit_text_note);
         editTextNote.setVisibility(View.GONE);
         tvPulseInfo = findViewById(R.id.heart_rate_info);
+        tvSimulate = findViewById(R.id.simulate);
 
         // MSO_LOG
         msoLogListView = (ListView)findViewById(R.id.listview_notes);
@@ -126,6 +134,35 @@ public class PatientActivity extends AppCompatActivity {
 
         if(request)
             llRequest.setVisibility(View.VISIBLE);
+
+        mHRSimulationHandler = new Handler();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopSimulation();
+    }
+
+    Runnable mStatusChecker = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                generateRandomHeartRate(); //this function can change value of mHRSimulationTimeInterval.
+            } finally {
+                // 100% guarantee that this always happens, even if
+                // your update method throws an exception
+                mHRSimulationHandler.postDelayed(mStatusChecker, mHRSimulationTimeInterval);
+            }
+        }
+    };
+
+    void startSimulation() {
+        mStatusChecker.run();
+    }
+
+    void stopSimulation() {
+        mHRSimulationHandler.removeCallbacks(mStatusChecker);
     }
 
     private class Receiver extends BroadcastReceiver {
@@ -163,6 +200,10 @@ public class PatientActivity extends AppCompatActivity {
                     catch (NumberFormatException e) {
                         hrValue = 0;
                     }
+                    updatePulseInfoText();
+                } else if (value.charAt(0)=='-') {
+                    tvPulseInfo.setText(getResources().getString(R.string.pulse_is_not_updated));
+                    tvPulseInfo.setTextColor(getResources().getColor(R.color.colorWarning));
                 }
             }
 
@@ -175,7 +216,6 @@ public class PatientActivity extends AppCompatActivity {
                     }
                 }
             }
-            updatePulseInfoText();
         }
     }
 
@@ -193,16 +233,35 @@ public class PatientActivity extends AppCompatActivity {
     }
 
     public void buttonSimulate_onClick(View view) {
+        if(!simulatingHeartRate) {
+            simulatingHeartRate = true;
+            startSimulation();
+            tvSimulate.setText(getResources().getString(R.string.stop_simulation));
+        } else {
+            simulatingHeartRate = false;
+            stopSimulation();
+            tvSimulate.setText(getResources().getString(R.string.simulate_graph));
+            tvPulseInfo.setText(getResources().getString(R.string.pulse_is_not_updated));
+            tvPulseInfo.setTextColor(getResources().getColor(R.color.colorWarning));
+        }
+    }
+
+    private void generateRandomHeartRate() {
         if(hrValue!=0)
             y=hrValue;
-        Random r = new Random();
-        int low = -3;
-        int high = 3;
-        int result = r.nextInt(high-low) + low;
 
+        int low = -2; // for dynamic HR use -2, for stable HR use -1
+        int high = 2;
         // Some extra logic so random value does not exceed possible values
-        if(y < 60 || y > 110)
-            invert =! invert;
+        if(y < 60) {
+            invert = false;
+        }
+        else if(y > 110) {
+            invert = true;
+        }
+
+        Random r = new Random();
+        int result = r.nextInt(high-low) + low;
         if(invert)
             y+=result;
         else

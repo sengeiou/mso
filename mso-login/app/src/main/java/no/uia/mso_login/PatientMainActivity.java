@@ -139,6 +139,14 @@ public class PatientMainActivity extends Activity {
     private int heartRateXValue = heartRateXMaxValue;
     int hrValue = 0;
 
+    // Heart Rate simulation
+    private int mHRSimulationTimeInterval = 500; // 600 ms
+    private Handler mHRSimulationHandler;
+    private boolean simulatingHeartRate = false;
+    int y = 70;
+    private boolean invert = false;
+    private TextView tvSimulate;
+
     // Shared preferences
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
@@ -202,6 +210,9 @@ public class PatientMainActivity extends Activity {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mPreferences.edit();
         mEditor.apply();
+
+        // HR Simulation
+        mHRSimulationHandler = new Handler();
     }
 
     public void loadSharedPreferences() {
@@ -241,6 +252,56 @@ public class PatientMainActivity extends Activity {
         heartRateGraph.getViewport().setYAxisBoundsManual(true);
         heartRateGraph.getViewport().setMinY(30);
         heartRateGraph.getViewport().setMaxY(220);
+    }
+
+    Runnable mStatusChecker = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                generateRandomHeartRate(); //this function can change value of mHRSimulationTimeInterval.
+            } finally {
+                // 100% guarantee that this always happens, even if
+                // your update method throws an exception
+                mHRSimulationHandler.postDelayed(mStatusChecker, mHRSimulationTimeInterval);
+            }
+        }
+    };
+
+    void startSimulation() {
+        mStatusChecker.run();
+    }
+
+    void stopSimulation() {
+        mHRSimulationHandler.removeCallbacks(mStatusChecker);
+    }
+
+    private void generateRandomHeartRate() {
+        if(hrValue!=0)
+            y=hrValue;
+
+        int low = -2; // for dynamic HR use -2, for stable HR use -1
+        int high = 2;
+        // Some extra logic so random value does not exceed possible values
+        if(y < 60) {
+            invert = false;
+        }
+        else if(y > 110) {
+            invert = true;
+        }
+
+        Random r = new Random();
+        int result = r.nextInt(high-low) + low;
+        if(invert)
+            y+=result;
+        else
+            y-=result;
+
+        addPointToHeartRateGraph(y);
+        TextView hr = findViewById(R.id.heart_rate);
+        hr.setText(String.valueOf(y));
+        hrValue = y;
+        sendMessageTroughMqttService(topicTX, formatMqttMessage(String.valueOf(hrValue)));
+        updatePulseInfoText();
     }
 
     private void addPointToAccGraph(int value) {
@@ -299,6 +360,7 @@ public class PatientMainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        stopSimulation();
         scanLeDevice(false);
     }
 
@@ -552,6 +614,7 @@ public class PatientMainActivity extends Activity {
         tvPatientName = findViewById(R.id.your_name);
         tvUsername = findViewById(R.id.your_username);
         tvUsername.setText(username);
+        tvSimulate = findViewById(R.id.simulate);
 
         // Button
         button = findViewById(R.id.button);
@@ -612,7 +675,6 @@ public class PatientMainActivity extends Activity {
                 if (checkbox.isChecked() && deviceAddress != null)
                     savedAddressTextView.setText(R.string.saved);
                 accGraph.setVisibility(View.GONE);
-                heartRateGraph.setVisibility(View.GONE);
                 readingAccData = false;
                 break;
             }
@@ -626,7 +688,6 @@ public class PatientMainActivity extends Activity {
                 } else
                     button.setText(R.string.start_scan);
                 accGraph.setVisibility(View.GONE);
-                heartRateGraph.setVisibility(View.GONE);
                 readingAccData = false;
                 break;
             }
@@ -752,33 +813,28 @@ public class PatientMainActivity extends Activity {
     }
 
     public void buttonSimulate_onClick(View view) {
-        heartRateGraph.setVisibility(View.VISIBLE);
-
-        Random r = new Random();
-        int low = -3;
-        int high = 3;
-        int result = r.nextInt(high-low) + low;
-
-        if(hrValue==0)
-            hrValue = 60;
-
-        hrValue -= result;
-
-        // Received HR data
-        heartRateTextView.setText(String.valueOf(hrValue));
-        heartRateInfoTextView.setVisibility(View.VISIBLE);
-
-        addPointToHeartRateGraph(hrValue);
-        if(hrValue > 100) { // high HR
-            heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorSerious));
-            heartRateInfoTextView.setText(R.string.pulse_is_high);
-        } else if(hrValue < 50) { // low HR
-            heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorSerious));
-            heartRateInfoTextView.setText(R.string.pulse_is_low);
-        } else { // normal HR
-            heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorHeartRate));
-            heartRateInfoTextView.setText(R.string.pulse_is_normal);
+        if(!simulatingHeartRate) {
+            simulatingHeartRate = true;
+            heartRateGraph.setVisibility(View.VISIBLE);
+            startSimulation();
+            tvSimulate.setText(getResources().getString(R.string.stop_simulation));
+        } else {
+            simulatingHeartRate = false;
+            stopSimulation();
+            tvSimulate.setText(getResources().getString(R.string.simulate_graph));
         }
-        sendMessageTroughMqttService(topicTX, formatMqttMessage(String.valueOf(hrValue)));
+    }
+
+    private void updatePulseInfoText() {
+        if(hrValue < 50) {
+            heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorSerious));
+            heartRateInfoTextView.setText(getResources().getString(R.string.pulse_is_low));
+        } else if(hrValue > 100) {
+            heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorSerious));
+            heartRateInfoTextView.setText(getResources().getString(R.string.pulse_is_high));
+        } else {
+            heartRateInfoTextView.setTextColor(getResources().getColor(R.color.colorPrimary));
+            heartRateInfoTextView.setText(getResources().getString(R.string.pulse_is_normal));
+        }
     }
 }

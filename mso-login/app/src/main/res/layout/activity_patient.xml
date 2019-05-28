@@ -180,6 +180,7 @@
                 android:id="@+id/graph" />
 
             <TextView
+                android:id="@+id/simulate"
                 android:clickable="true"
                 android:focusable="true"
                 android:onClick="buttonSimulate_onClick"
