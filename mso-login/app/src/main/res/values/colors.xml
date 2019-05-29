@@ -3,7 +3,9 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
     <color name="colorHeartRate">#008577</color>
     <color name="colorWarning">#F08A5D</color>
     <color name="colorSerious">#EF5184</color>
+    <color name="colorFall">#3fc1c9</color>
 </resources>

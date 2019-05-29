@@ -42,6 +42,7 @@ public class ListAdapterPatient extends ArrayAdapter<Patient> {
         String patientName = getItem(position).getName();
         boolean emergencyRequest = getItem(position).getEmergencyRequest();
         boolean assistanceRequest = getItem(position).getAssistanceRequest();
+        boolean fallRequest = getItem(position).isFallRequest();
 
         Patient patient = new Patient(id, username, patientName, heartRate);
         LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -54,9 +55,10 @@ public class ListAdapterPatient extends ArrayAdapter<Patient> {
         TextView tvPulseInfo = (TextView) convertView.findViewById(R.id.heart_rate_info);
         LinearLayout lyEmergencyRequest = (LinearLayout) convertView.findViewById(R.id.emergency_request);
         LinearLayout lyAssistanceRequest = (LinearLayout) convertView.findViewById(R.id.assistance_request);
+        LinearLayout lyFallRequest = (LinearLayout) convertView.findViewById(R.id.fall_request);
 
         int hrValue = 0;
-        if(isInteger(heartRate)){
+        if(App.isInteger(heartRate)){
             hrValue = Integer.parseInt(heartRate);
         }
 
@@ -74,15 +76,13 @@ public class ListAdapterPatient extends ArrayAdapter<Patient> {
             tvPulseInfo.setTextColor(Color.parseColor("#008577"));
         }
 
-        if(emergencyRequest) {
+        // Request from patient
+        if(emergencyRequest)
             lyEmergencyRequest.setVisibility(View.VISIBLE);
-        } else
-            lyEmergencyRequest.setVisibility(View.GONE);
-
-        if(assistanceRequest) {
+        if(assistanceRequest)
             lyAssistanceRequest.setVisibility(View.VISIBLE);
-        } else
-            lyAssistanceRequest.setVisibility(View.GONE);
+        if(fallRequest)
+            lyFallRequest.setVisibility(View.VISIBLE);
 
         tvId.setText(strId);
         tvUsername.setText(username);
@@ -92,21 +92,5 @@ public class ListAdapterPatient extends ArrayAdapter<Patient> {
         v = convertView;
         vgParent = parent;
         return convertView;
-    }
-
-    private Boolean isInteger(String s) {
-        return isInteger(s,10);
-    }
-
-    private Boolean isInteger(String s, int radix) {
-        if(s.isEmpty()) return false;
-        for(int i = 0; i < s.length(); i++) {
-            if(i == 0 && s.charAt(i) == '-') {
-                if(s.length() == 1) return false;
-                else continue;
-            }
-            if(Character.digit(s.charAt(i),radix) < 0) return false;
-        }
-        return true;
     }
 }

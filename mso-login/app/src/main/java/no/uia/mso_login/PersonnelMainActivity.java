@@ -63,7 +63,9 @@ public class PersonnelMainActivity extends AppCompatActivity {
                 // Based on item add info to intent
                 intent.putExtra("emergencyRequest", patient.getEmergencyRequest());
                 intent.putExtra("assistanceRequest", patient.getAssistanceRequest());
+                intent.putExtra("fallRequest", patient.isFallRequest());
                 patient.setEmergencyRequest(false);
+                patient.setFallRequest(false);
                 patient.setAssistanceRequest(false);
                 intent.putExtra("username", patient.getUsername());
                 intent.putExtra("name", patient.getName());
@@ -144,6 +146,10 @@ public class PersonnelMainActivity extends AppCompatActivity {
                         p.setAssistanceRequest(true);
                         adapter.notifyDataSetChanged();
                         return;
+                    } else if (value.charAt(0)=='F') {
+                        p.setFallRequest(true);
+                        adapter.notifyDataSetChanged();
+                        return;
                     }
 
                     p.setHeartRate(value);
@@ -164,6 +170,10 @@ public class PersonnelMainActivity extends AppCompatActivity {
             } else if (value.charAt(0)=='h') {
                 patient.setHeartRate("--");
                 patient.setAssistanceRequest(true);
+            } else if (value.charAt(0)=='F') {
+                patient.setFallRequest(true);
+                adapter.notifyDataSetChanged();
+                return;
             }
 
             arrayList.add(patient);
@@ -322,7 +332,6 @@ public class PersonnelMainActivity extends AppCompatActivity {
             for(Patient p: arrayList) {
                 if(p.getUsername().equals(generatedUsername)) {
                     usernameIsOccupied = true;
-                    Log.i(TAG, "GENERATE: iteration no " + String.valueOf(i) + " Username" + generatedUsername + "is occupied");
                 }
             }
             if(usernameIsOccupied) {

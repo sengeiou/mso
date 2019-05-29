@@ -74,8 +74,9 @@
     <string name="connected_trough_cloudmqtt">Overfører data via CloudMQTT i bakgrunnen</string>
 
     <!-- Requests-->
-    <string name="emergency_request">Forespør akutt nødhjelp!</string>
-    <string name="assistance_request">Forespør assistanse.</string>
+    <string name="emergency_request">Trenger akutt nødhjelp!</string>
+    <string name="assistance_request">Ønsker assistanse</string>
     <string name="assistance">Assistanse</string>
     <string name="emergency">Nødhjelp</string>
+    <string name="fall_request">Fall detektert</string>
 </resources>

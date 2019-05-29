@@ -60,6 +60,7 @@ public class PatientActivity extends AppCompatActivity {
     private TextView tvSimulate;
     private LinearLayout llEmergencyRequest;
     private LinearLayout llAssistanceRequest;
+    private LinearLayout llFallRequest;
 
     // Program state
     private boolean editingPatientName = false;
@@ -88,6 +89,7 @@ public class PatientActivity extends AppCompatActivity {
             patientFilename = "patient" + patientUsername + ".txt";
         boolean emergencyRequest = intent.getBooleanExtra("emergencyRequest", false);
         boolean assistanceRequest = intent.getBooleanExtra("assistanceRequest", false);
+        boolean fallRequest = intent.getBooleanExtra("fallRequest", false);
 
         // TODO: define action as static string
         IntentFilter filter = new IntentFilter("MQTT_ON_RECIEVE");
@@ -134,11 +136,14 @@ public class PatientActivity extends AppCompatActivity {
         etPatientName = (EditText) findViewById(R.id.patient_name_edit_text);
         llEmergencyRequest = (LinearLayout) findViewById(R.id.emergency_request);
         llAssistanceRequest = (LinearLayout) findViewById(R.id.assistance_request);
+        llFallRequest = (LinearLayout) findViewById(R.id.fall_request);
 
         if(emergencyRequest)
             llEmergencyRequest.setVisibility(View.VISIBLE);
         if(assistanceRequest)
             llAssistanceRequest.setVisibility(View.VISIBLE);
+        if(fallRequest)
+            llFallRequest.setVisibility(View.VISIBLE);
 
         mHRSimulationHandler = new Handler();
     }
@@ -197,6 +202,9 @@ public class PatientActivity extends AppCompatActivity {
                     return;
                 } else if(value.charAt(0)=='h') {
                     llAssistanceRequest.setVisibility(View.VISIBLE);
+                    return;
+                } else if(value.charAt(0)=='F') {
+                    llFallRequest.setVisibility(View.VISIBLE);
                     return;
                 } else if (App.isInteger(value)){
                     TextView hr = findViewById(R.id.heart_rate);

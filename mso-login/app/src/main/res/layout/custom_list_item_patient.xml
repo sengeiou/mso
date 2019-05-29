@@ -124,4 +124,23 @@
             android:textColor="@android:color/white"
             android:text="@string/assistance_request"/>
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fall_request"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/custom_list_item_blue">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="6dp"
+            android:textColor="@android:color/white"
+            android:text="@string/fall_request"/>
+    </LinearLayout>
 </LinearLayout>

@@ -7,6 +7,7 @@ public class Patient {
     private String heartRate;
     private boolean emergencyRequest = false;
     private boolean assistanceRequest = false;
+    private boolean fallRequest = false;
 
     public Patient(int id, String username, String patientName, String heartRate) {
         this.id = id;
@@ -45,5 +46,13 @@ public class Patient {
 
     public String getHeartRate() {
         return heartRate;
+    }
+
+    public boolean isFallRequest() {
+        return fallRequest;
+    }
+
+    public void setFallRequest(boolean fallRequest) {
+        this.fallRequest = fallRequest;
     }
 }
