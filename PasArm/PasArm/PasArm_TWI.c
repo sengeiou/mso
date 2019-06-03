@@ -93,6 +93,13 @@ void BH1790GLC_adc_rx(uint16_t* MEAS_VAL)
     MEAS_VAL[1] = (data[3]<<8)|data[2];
 }
 
+void BH1790GLC_SLEEP(void)
+{
+    uint8_t sleep[2] = {BH1790GLC_RESET, 0x80};
+
+    nrf_drv_twi_tx(&m_twi_PasArm, BH1790GLC_DEVICE_ADDRESS, sleep, sizeof(sleep), false);
+}
+
 /**
  * @Initing MPU6050 and returns conection status
  */

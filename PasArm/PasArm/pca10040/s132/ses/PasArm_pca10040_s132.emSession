@@ -54,20 +54,20 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="25" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../BLE.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="67" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../BLE.c" selected="0" top="38" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="48" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../PasArm.c" selected="0" top="19" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="15" y="25" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../BLE.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="45" y="720" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../BLE.c" selected="0" top="695" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="9" y="202" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../PasArm.c" selected="1" top="175" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="39" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../PasArm.h" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="29" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="0" top="9" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="182" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../components/libraries/bsp/bsp_btn_ble.c" selected="0" top="30" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="204" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../components/libraries/bsp/bsp.c" selected="0" top="115" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="141" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../components/libraries/bsp/bsp.h" selected="0" top="112" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="94" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../fall_detection.c" selected="0" top="72" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="17" y="92" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../fall_detection.c" selected="0" top="60" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="7" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../fall_detection.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="39" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../BH1790GLC.h" selected="0" top="9" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="122" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../PasArm_TWI.c" selected="0" top="102" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="44" y="11" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../BH1790GLC.h" selected="0" top="6" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="47" y="97" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../PasArm_TWI.c" selected="0" top="69" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="36" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../MPU6050.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="6372" useTextEdit="1" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="1" top="6667" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="6372" useTextEdit="1" useBinaryEdit="0" left="0" path="../config/sdk_config.h" selected="0" top="6667" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="74" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../components/boards/boards.c" selected="0" top="57" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="102" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../components/libraries/util/nrf_assert.h" selected="0" top="85" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="46" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../custom_board.h" selected="0" top="30" codecName="Default"/>
@@ -81,5 +81,5 @@
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="5" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../PasArm_timer.h" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="339" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../components/libraries/pwr_mgmt/nrf_pwr_mgmt.c" selected="0" top="0" codecName="Default"/>
  </Files>
- <ARMCrossStudioWindow activeProject="PasArm_pca10040_s132" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Release" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/aksel/OneDrive/Skrivebord/PasArm/PasArm" debugSearchPath="" autoConnectCapabilities="3199"/>
+ <ARMCrossStudioWindow activeProject="PasArm_pca10040_s132" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Release" debugSearchFileMap="" fileDialogInitialDirectory="C:/Users/aksel/OneDrive/Skrivebord/PasArm/PasArm" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>

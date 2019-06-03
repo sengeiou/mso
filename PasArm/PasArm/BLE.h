@@ -23,6 +23,7 @@
 #define UART_RX_BUF_SIZE                256                                         /**< UART RX buffer size. */
 
 bool connected(void);
+bool Sent_Acc_Data(void);
 bool get_active_leds();
 void B_L_E_Alarm(uint8_t Alarm_event);
 bool B_L_E_init(void);

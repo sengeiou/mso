@@ -64,6 +64,7 @@
 #include "BLE.h"
 #include "PasArm.h"
 #include "MPU6050.h"
+#include "BH1790GLC.h"
 
 BLE_NUS_DEF(m_nus, NRF_SDH_BLE_TOTAL_LINK_COUNT);                                   /**< BLE NUS service instance. */
 NRF_BLE_GATT_DEF(m_gatt);                                                           /**< GATT module instance. */
@@ -80,6 +81,7 @@ static ble_uuid_t m_adv_uuids[]          =                                      
 
 static bool initiialised = false;
 static bool Connected = false;
+static bool sent_acc_data = false;
 
 
 /**@brief Function for assert macro callback.
@@ -201,8 +203,6 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
         {
             do
             { 
-                //err_code = app_uart_put(p_evt->params.rx_data.p_data[i]);
-                //sze_spim_tx_buf[i] = p_evt->params.rx_data.p_data[i];
                 NRF_LOG_INFO("0x%x",p_evt->params.rx_data.p_data[i]);
                 if ((err_code != NRF_SUCCESS) && (err_code != NRF_ERROR_BUSY))
                 {
@@ -215,7 +215,14 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
         {
             //while (app_uart_put('\n') == NRF_ERROR_BUSY);
         }
-        //set_device_name(p_evt->params.rx_data.p_data);
+
+        if(p_evt->params.rx_data.p_data[0] == 0x41)
+        {
+            if(!sent_acc_data)
+                sent_acc_data = true;
+            else
+                sent_acc_data = false;
+        }
     }
 }
 /**@snippet [Handling the data received over BLE] */
@@ -308,6 +315,7 @@ static void conn_params_init(void)
 static void sleep_mode_enter(void)
 {
     MPU6050_SLEEP();
+    BH1790GLC_SLEEP();
 
     uint32_t err_code = bsp_indication_set(BSP_INDICATE_IDLE);
     APP_ERROR_CHECK(err_code);
@@ -689,6 +697,11 @@ bool connected(void)
 {
   return Connected;
 }
+
+bool Sent_Acc_Data(void)
+{
+  return sent_acc_data;
+}
 /**@brief send function.
  */
 void B_L_E_send(char info[], uint16_t data)
@@ -701,7 +714,12 @@ void B_L_E_send(char info[], uint16_t data)
     else if (data == NULL)
         sprintf(send_data, "%s", info);
     else
-        sprintf(send_data, "%s%i", info, data);
+    {
+        if(info[0] == 'F')
+            sprintf(send_data, "%s%i", info, (int16_t)data);
+        else
+            sprintf(send_data, "%s%i", info, data);
+    }
 
     uint8_t ble_to_phone[sizeof(send_data)];
     for(int i = 0; i < sizeof(send_data); i++)

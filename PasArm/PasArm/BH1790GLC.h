@@ -9,6 +9,7 @@
 
 #define BH1790GLC_MANUFACTURER_ID     (0x0F)
 #define BH1790GLC_PART_ID             (0x10)
+#define BH1790GLC_RESET               (0x40)
 #define BH1790GLC_MEAS_CONTROL1       (0x41)
 #define BH1790GLC_MEAS_CONTROL2       (0x42)
 #define BH1790GLC_MEAS_START          (0x43)
@@ -45,5 +46,6 @@
 void twi_init (void);
 bool BH1790GLC_init(void);
 void BH1790GLC_adc_rx(uint16_t* MEAS_VAL);
+void BH1790GLC_SLEEP(void);
 
 #endif // BH1790GLC_H__

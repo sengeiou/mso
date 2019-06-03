@@ -45,8 +45,7 @@ void motion_update(struct Accelerometer *acc)
 bool fall_detection(struct Accelerometer *acc)
 {
     static uint8_t count  = 0;
-    uint8_t check         = 0;
-    bool start = false;
+    int16_t distance      = 0;
     bool fall = false;
 
     motion_update(acc);
@@ -67,34 +66,27 @@ bool fall_detection(struct Accelerometer *acc)
                 else
                     acc->detection[i] = acc->tott_diff;
 
-                if(acc->detection[i] > acc_fall_value && !start)
-                    start = true;
-                else if(acc->detection[i] < -acc_fall_value && start && check < shake)
-                {
-                    start = false;
-                    check = 0;
-                }
-                else if(acc->detection[i] < -acc_fall_value && start && check > falling)
-                {
-                    count = 0;
-                    start = false;
-                    fall  = true;
-                    break;
-                }
+                distance += acc->detection[i]/(32*16);
 
-                if(start)
-                    check++;
+                if(i == 0 && acc->detection[i] > -acc_fall_value && !fall)
+                    fall  = true;
+                else if(i > shake && fall && (acc->detection[i] > acc_fall_value || acc->detection[i] < -acc_fall_value))
+                    fall = false;
             }
         }
     }
     else
         acc->firts_entry = false;
+
+    if(Sent_Acc_Data())
+        B_L_E_send("FALL: ", acc->tott_diff);
+
     /*
     NRF_LOG_INFO("x=%i", acc->x[0]);
     NRF_LOG_INFO("y=%i", acc->y[0]);
     NRF_LOG_INFO("z=%i", acc->z[0]);*/
     NRF_LOG_INFO("diff=%i", acc->tott_diff);
-    //NRF_LOG_INFO("diff =%i", acc->detection[32]);
+    //NRF_LOG_INFO("distance =%i", distance);
     //NRF_LOG_FLUSH();
 
     return fall;
